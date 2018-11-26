@@ -105,6 +105,9 @@ ALTER TABLE [KB301_Kirilov].Kirilov.Measurments ADD
 	ON UPDATE CASCADE
 GO
 
+SET DATEFORMAT dmy;  
+GO
+
 INSERT INTO [KB301_Kirilov].Kirilov.Stations
 	(Id, Name, Adress)
 	VALUES
@@ -113,10 +116,25 @@ INSERT INTO [KB301_Kirilov].Kirilov.Stations
 	,(3, N'Дом', N'Ленина, 64')
 GO
 
-EXEC sp_changedbowner 'sa'	--Смена владельца для построения диаграмм
+INSERT INTO [KB301_Kirilov].Kirilov.MeasurmentsTypes
+	(Id, MeasurmentsType, UnitsType)
+	VALUES
+	(1, N'Температура', N'°C')
+	,(2, N'Давление', N'мм. рт. ст.')
+	,(3, N'Влажность', N'%')
+GO
 
---INSERT INTO [KB301_Kirilov].Kirilov.MeasurmentsTypes
---	(Id, MeasurmentsType, UnitsType)
---	VALUES
---	(1, )
---GO
+INSERT INTO [KB301_Kirilov].Kirilov.Measurments
+	(Id_s, Id_mt, DateAndTime, Value)
+	VALUES
+	(1, 1, N'13/09/2018', N'12')
+	,(1, 2, N'12/09/2018', N'760')
+	,(1, 3, N'02/10/2018', N'53')
+	,(1, 1, N'05/09/2018', N'17')
+	,(2, 3, N'17/09/2018', N'80')
+	,(2, 2, N'13/09/2018', N'740')
+	,(3, 1, N'14/10/2018', N'13')
+	,(3, 2, N'06/09/2018', N'764')
+GO
+
+EXEC sp_changedbowner 'sa'	--Смена владельца для построения диаграмм
