@@ -113,7 +113,7 @@ INSERT INTO [KB301_Kirilov].Kirilov.Stations
 	,(3, N'Дом', N'Ленина, 64')
 GO
 
-EXEC sp_changedbowner 'sa'
+EXEC sp_changedbowner 'sa'	--Смена владельца для построения диаграмм
 
 --INSERT INTO [KB301_Kirilov].Kirilov.MeasurmentsTypes
 --	(Id, MeasurmentsType, UnitsType)
