@@ -1,0 +1,136 @@
+GAS LISTING i_calc.s 			page 1
+
+
+   1              	.globl _start
+   2              	.data
+   3 0000 30313233 	char_tab:	.ascii "0123456789"
+   3      34353637 
+   3      3839
+   4 000a 2A       	op:	.ascii "*"	# знак операции
+   5              	f_num 	= 10
+   6              	s_num	= 2
+   7 000b 2B       	op_add:	.ascii "+"
+   8 000c 2D       	op_sub:	.ascii "-"
+   9 000d 2A       	op_mov:	.ascii "*"
+  10 000e 2F       	op_div:	.ascii "/"
+  11 000f 0A       	line_breake:	.ascii "\n"
+  12              	.text
+  13              	_start:
+  14 0000 48C7C101 		mov 	$1, %rcx
+  14      000000
+  15 0007 488D3425 		lea	op, %rsi
+  15      00000000 
+  16 000f 488D3C25 		lea	op_add, %rdi
+  16      00000000 
+  17 0017 A6       		cmpsb
+  18 0018 742F     		je	add_op
+  19 001a 48FFCE   		dec	%rsi
+  20 001d 668D3C25 		lea	op_sub, %di
+  20      00000000 
+  21 0025 A6       		cmpsb
+  22 0026 742E     		je	sub_op
+  23 0028 48FFCE   		dec	%rsi
+  24 002b 668D3C25 		lea	op_mov, %di
+  24      00000000 
+  25 0033 A6       		cmpsb
+  26 0034 742D     		je	mul_op
+  27 0036 48FFCE   		dec	%rsi
+  28 0039 668D3C25 		lea	op_div, %di
+  28      00000000 
+  29 0041 A6       		cmpsb
+  30 0042 7432     		je	div_op
+  31 0044 48FFCE   		dec	%rsi
+  32 0047 EB40     		jmp	_exit
+  33              	add_op:
+  34 0049 48C7C00A 		mov	$f_num, %rax
+  34      000000
+  35 0050 4883C002 		add 	$s_num, %rax
+  36 0054 EB43     		jmp	_numprint
+  37              	sub_op:
+  38 0056 48C7C00A 		mov 	$f_num, %rax
+  38      000000
+  39 005d 4883E802 		sub 	$s_num, %rax
+  40 0061 EB36     		jmp 	_numprint
+  41              	mul_op:
+  42 0063 48C7C00A 		mov 	$f_num, %rax
+  42      000000
+  43 006a 48C7C302 		mov 	$s_num, %rbx
+  43      000000
+  44 0071 48F7E3   		mul 	%rbx
+  45 0074 EB23     		jmp 	_numprint
+GAS LISTING i_calc.s 			page 2
+
+
+  46              	div_op:
+  47 0076 48C7C00A 		mov 	$f_num, %rax
+  47      000000
+  48 007d 48C7C302 		mov 	$s_num, %rbx
+  48      000000
+  49 0084 48F7F3   		div 	%rbx
+  50 0087 EB10     		jmp 	_numprint
+  51              	_exit:
+  52 0089 48C7C03C 		mov		$60, %rax	# Аргументы для выхода
+  52      000000
+  53 0090 48C7C700 		mov		$0, %rdi	# -
+  53      000000
+  54 0097 0F05     		syscall
+  55              	
+  56              	_numprint:
+  57 0099 4831C9   		xor	%rcx, %rcx
+  58 009c 48C7C30A 		movq	$10, %rbx
+  58      000000
+  59              	1:
+  60 00a3 4831D2   		xorq	%rdx, %rdx
+  61 00a6 48F7F3   		div		%rbx
+  62 00a9 52       		pushq	%rdx
+  63 00aa 48FFC1   		inc	%rcx
+  64 00ad 4885C0   		testq	%rax, %rax
+  65 00b0 75F1     		jnz	1b
+  66              	2:
+  67 00b2 58       		popq	%rax
+  68 00b3 488D3425 		lea	char_tab, %rsi
+  68      00000000 
+  69 00bb 4801C6   		add 	%rax, %rsi
+  70 00be 51       		push 	%rcx
+  71 00bf 48C7C001 		mov 	$1, %rax
+  71      000000
+  72 00c6 48C7C701 		mov 	$1, %rdi
+  72      000000
+  73 00cd 48C7C201 		mov 	$1, %rdx
+  73      000000
+  74 00d4 0F05     		syscall
+  75 00d6 59       		pop 	%rcx
+  76 00d7 48FFC9   		dec	%rcx
+  77 00da 75D6     		jnz	2b
+  78 00dc 488D3425 		lea 	line_breake, %rsi
+  78      00000000 
+  79 00e4 48C7C001 		mov 	$1, %rax
+  79      000000
+  80 00eb 48C7C701 		mov 	$1, %rdi
+  80      000000
+  81 00f2 48C7C201 		mov 	$1, %rdx
+  81      000000
+  82 00f9 0F05     		syscall
+  83 00fb EB8C     		jmp	_exit...
+GAS LISTING i_calc.s 			page 3
+
+
+DEFINED SYMBOLS
+            i_calc.s:13     .text:0000000000000000 _start
+            i_calc.s:3      .data:0000000000000000 char_tab
+            i_calc.s:4      .data:000000000000000a op
+            i_calc.s:5      *ABS*:000000000000000a f_num
+            i_calc.s:6      *ABS*:0000000000000002 s_num
+            i_calc.s:7      .data:000000000000000b op_add
+            i_calc.s:8      .data:000000000000000c op_sub
+            i_calc.s:9      .data:000000000000000d op_mov
+            i_calc.s:10     .data:000000000000000e op_div
+            i_calc.s:11     .data:000000000000000f line_breake
+            i_calc.s:33     .text:0000000000000049 add_op
+            i_calc.s:37     .text:0000000000000056 sub_op
+            i_calc.s:41     .text:0000000000000063 mul_op
+            i_calc.s:46     .text:0000000000000076 div_op
+            i_calc.s:51     .text:0000000000000089 _exit
+            i_calc.s:56     .text:0000000000000099 _numprint
+
+NO UNDEFINED SYMBOLS
