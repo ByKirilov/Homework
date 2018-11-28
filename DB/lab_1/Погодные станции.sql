@@ -1,7 +1,7 @@
 USE master
-/*напюыемхе й яхярелмни аюге SQL яепбепю
-дкъ янгдюмхъ онкэгнбюрекэяйни аюгш дюммшу*/
-GO --пюгдекхрекэ аюрвеи (BATH)
+/*п·п▒п═п░п╘п∙п²п≤п∙ п  п║п≤п║п╒п∙п°п²п·п≥ п▒п░п≈п∙ SQL п║п∙п═п▓п∙п═п░
+п■п⌡п╞ п║п·п≈п■п░п²п≤п╞ п÷п·п⌡п╛п≈п·п▓п░п╒п∙п⌡п╛п║п п·п≥ п▒п░п≈п╚ п■п░п²п²п╚п╔*/
+GO --п═п░п≈п■п∙п⌡п≤п╒п∙п⌡п╛ п▒п░п╒п╖п∙п≥ (BATH)
 
 IF  EXISTS (
 	SELECT name 
@@ -10,9 +10,9 @@ IF  EXISTS (
 )
 ALTER DATABASE [KB301_Kirilov] set single_user with rollback immediate
 GO
-/* опнбепъел, ясыеярбсер кх мю яепбепе аюгю дюммшу
-я хлемел [хлъ аюгш], еякх дю, рн гюйпшбюел бяе рейсыхе
- янедхмемхъ я щрни аюгни */
+/* п÷п═п·п▓п∙п═п╞п∙п°, п║пёп╘п∙п║п╒п▓пёп∙п╒ п⌡п≤ п²п░ п║п∙п═п▓п∙п═п∙ п▒п░п≈п░ п■п░п²п²п╚п╔
+п║ п≤п°п∙п²п∙п° [п≤п°п╞ п▒п░п≈п╚], п∙п║п⌡п≤ п■п░, п╒п· п≈п░п п═п╚п▓п░п∙п° п▓п║п∙ п╒п∙п пёп╘п≤п∙
+ п║п·п∙п■п≤п²п∙п²п≤п╞ п║ п╜п╒п·п≥ п▒п░п≈п·п≥ */
 
 IF  EXISTS (
 	SELECT name 
@@ -21,15 +21,15 @@ IF  EXISTS (
 )
 DROP DATABASE [KB301_Kirilov]
 GO
-/* ямнбю опнбепъел, ясыеярбсер кх мю яепбепе аюгю дюммшу
-я хлемел [хлъ аюгш], еякх дю, сдюкъел ее я яепбепю */
+/* п║п²п·п▓п░ п÷п═п·п▓п∙п═п╞п∙п°, п║пёп╘п∙п║п╒п▓пёп∙п╒ п⌡п≤ п²п░ п║п∙п═п▓п∙п═п∙ п▒п░п≈п░ п■п░п²п²п╚п╔
+п║ п≤п°п∙п²п∙п° [п≤п°п╞ п▒п░п≈п╚], п∙п║п⌡п≤ п■п░, пёп■п░п⌡п╞п∙п° п∙п∙ п║ п║п∙п═п▓п∙п═п░ */
 
-/* дюммши акнй менаундхл дкъ йнппейрмнцн оепеянгдюмхъ аюгш
-дюммшу я хлемел [хлъ аюгш] опх менаундхлнярх */
+/* п■п░п²п²п╚п≥ п▒п⌡п·п  п²п∙п·п▒п╔п·п■п≤п° п■п⌡п╞ п п·п═п═п∙п п╒п²п·п⌠п· п÷п∙п═п∙п║п·п≈п■п░п²п≤п╞ п▒п░п≈п╚
+п■п░п²п²п╚п╔ п║ п≤п°п∙п²п∙п° [п≤п°п╞ п▒п░п≈п╚] п÷п═п≤ п²п∙п·п▒п╔п·п■п≤п°п·п║п╒п≤ */
 
 CREATE DATABASE [KB301_Kirilov]
 GO
--- янгдюел аюгс дюммшу
+-- п║п·п≈п■п░п∙п° п▒п░п≈пё п■п░п²п²п╚п╔
 
 USE [KB301_Kirilov]
 GO
@@ -41,10 +41,10 @@ IF EXISTS(
 ) 
  DROP SCHEMA Kirilov
 GO
-/*опнбепъел, ясыеярбсер кх б аюге дюммшу
- [хлъ аюгш] яуелю я хлемел тЮЛХКХЪ, еякх дю,
-  рн опедбюпхрекэмн сдюкъел ее хг аюгш
-  еякх бш сюкъере бяч аюгс жекхйнл - щрю вюярэ яйпхорю ме мсфмю */
+/*п÷п═п·п▓п∙п═п╞п∙п°, п║пёп╘п∙п║п╒п▓пёп∙п╒ п⌡п≤ п▓ п▒п░п≈п∙ п■п░п²п²п╚п╔
+ [п≤п°п╞ п▒п░п≈п╚] п║п╔п∙п°п░ п║ п≤п°п∙п²п∙п° п╓п╟п╪п╦п╩п╦я▐, п∙п║п⌡п≤ п■п░,
+  п╒п· п÷п═п∙п■п▓п░п═п≤п╒п∙п⌡п╛п²п· пёп■п░п⌡п╞п∙п° п∙п∙ п≤п≈ п▒п░п≈п╚
+  п∙п║п⌡п≤ п▓п╚ пёп░п⌡п╞п∙п╒п∙ п▓п║п╝ п▒п░п≈пё п╕п∙п⌡п≤п п·п° - п╜п╒п░ п╖п░п║п╒п╛ п║п п═п≤п÷п╒п░ п²п∙ п²пёп√п²п░ */
 
 CREATE SCHEMA Kirilov 
 GO
@@ -53,17 +53,17 @@ IF OBJECT_ID('[KB301_Kirilov].Kirilov.Stations', 'U') IS NOT NULL
   DROP TABLE  [KB301_Kirilov].Kirilov.Stations
 GO
 
-/*опнбепъел, ясыеярбсер кх б аюге дюммшу
- [хлъ аюгш] х яуеле я хлемел тЮЛХКХЪ рюакхжю ut_students еякх дю, 
-  рн опедбюпхрекэмн сдюкъел ее хг аюгш х яуелш.
-  еякх бш сюкъере бяч аюгс жекхйнл - щрю вюярэ яйпхорю ме мсфмю */
+/*п÷п═п·п▓п∙п═п╞п∙п°, п║пёп╘п∙п║п╒п▓пёп∙п╒ п⌡п≤ п▓ п▒п░п≈п∙ п■п░п²п²п╚п╔
+ [п≤п°п╞ п▒п░п≈п╚] п≤ п║п╔п∙п°п∙ п║ п≤п°п∙п²п∙п° п╓п╟п╪п╦п╩п╦я▐ п╒п░п▒п⌡п≤п╕п░ ut_students п∙п║п⌡п≤ п■п░, 
+  п╒п· п÷п═п∙п■п▓п░п═п≤п╒п∙п⌡п╛п²п· пёп■п░п⌡п╞п∙п° п∙п∙ п≤п≈ п▒п░п≈п╚ п≤ п║п╔п∙п°п╚.
+  п∙п║п⌡п≤ п▓п╚ пёп░п⌡п╞п∙п╒п∙ п▓п║п╝ п▒п░п≈пё п╕п∙п⌡п≤п п·п° - п╜п╒п░ п╖п░п║п╒п╛ п║п п═п≤п÷п╒п░ п²п∙ п²пёп√п²п░ */
 
 CREATE TABLE [KB301_Kirilov].Kirilov.Stations
 (
-	Id smallint NOT NULL, 
+	s_Id smallint NOT NULL, 
 	Name nvarchar(30) NULL, 
 	Adress nvarchar(30) NULL,
-	CONSTRAINT Id_s PRIMARY KEY (Id)
+	CONSTRAINT Id_s PRIMARY KEY (s_Id)
 )
 GO
 
@@ -73,10 +73,10 @@ GO
 
 CREATE TABLE [KB301_Kirilov].Kirilov.MeasurmentsTypes
 (
-	Id smallint  NOT NULL, 
+	mt_Id smallint  NOT NULL, 
 	MeasurmentsType nvarchar(15) NULL, 
 	UnitsType nvarchar(30) NOT NULL,
-	CONSTRAINT Id_mt PRIMARY KEY (Id)
+	CONSTRAINT Id_mt PRIMARY KEY (mt_Id)
 )
 GO
 
@@ -89,19 +89,19 @@ CREATE TABLE [KB301_Kirilov].Kirilov.Measurments
 	Id_s smallint NOT NULL,
 	Id_mt smallint NOT NULL,
 	DateAndTime datetime  NOT NULL,
-	Value nvarchar(10) NOT NULL
+	Value smallint NOT NULL
 )
 GO
 
 ALTER TABLE [KB301_Kirilov].Kirilov.Measurments ADD
 	CONSTRAINT FK_Id_mt FOREIGN KEY (Id_mt)
-	REFERENCES [KB301_Kirilov].Kirilov.MeasurmentsTypes(Id)
+	REFERENCES [KB301_Kirilov].Kirilov.MeasurmentsTypes(mt_Id)
 	ON UPDATE CASCADE
 GO
 
 ALTER TABLE [KB301_Kirilov].Kirilov.Measurments ADD
 	CONSTRAINT FK_Id_s FOREIGN KEY (Id_s)
-	REFERENCES [KB301_Kirilov].Kirilov.Stations(Id)
+	REFERENCES [KB301_Kirilov].Kirilov.Stations(s_Id)
 	ON UPDATE CASCADE
 GO
 
@@ -109,32 +109,45 @@ SET DATEFORMAT dmy;
 GO
 
 INSERT INTO [KB301_Kirilov].Kirilov.Stations
-	(Id, Name, Adress)
+	(s_Id, Name, Adress)
 	VALUES
-	(1, N'лЮР-ЛЕУ', N'рСПЦЕМЕБЮ, 4')
-	,(2, N'нАЫЮЦЮ', N'вЮОЮЕБЮ, 16ю')
-	,(3, N'дНЛ', N'кЕМХМЮ, 64')
+	(1, N'п°п╟я┌-п╪п╣я┘', N'п╒я┐я─пЁп╣п╫п╣п╡п╟, 4')
+	,(2, N'п·п╠я┴п╟пЁп╟', N'п╖п╟п©п╟п╣п╡п╟, 16п░')
+	,(3, N'п■п╬п╪', N'п⌡п╣п╫п╦п╫п╟, 64')
 GO
 
 INSERT INTO [KB301_Kirilov].Kirilov.MeasurmentsTypes
-	(Id, MeasurmentsType, UnitsType)
+	(mt_Id, MeasurmentsType, UnitsType)
 	VALUES
-	(1, N'рЕЛОЕПЮРСПЮ', N'╟C')
-	,(2, N'дЮБКЕМХЕ', N'ЛЛ. ПР. ЯР.')
-	,(3, N'бКЮФМНЯРЭ', N'%')
+	(1, N'п╒п╣п╪п©п╣я─п╟я┌я┐я─п╟', N'б╟C')
+	,(2, N'п■п╟п╡п╩п╣п╫п╦п╣', N'п╪п╪. я─я┌. я│я┌.')
+	,(3, N'п▓п╩п╟п╤п╫п╬я│я┌я▄', N'%')
 GO
 
 INSERT INTO [KB301_Kirilov].Kirilov.Measurments
 	(Id_s, Id_mt, DateAndTime, Value)
 	VALUES
-	(1, 1, N'13/09/2018', N'12')
-	,(1, 2, N'12/09/2018', N'760')
-	,(1, 3, N'02/10/2018', N'53')
-	,(1, 1, N'05/09/2018', N'17')
-	,(2, 3, N'17/09/2018', N'80')
-	,(2, 2, N'13/09/2018', N'740')
-	,(3, 1, N'14/10/2018', N'13')
-	,(3, 2, N'06/09/2018', N'764')
+	(1, 1, N'13/09/2018', '12')
+	,(1, 1, N'13/09/2018', '14')
+	,(1, 2, N'13/09/2018', '760')
+	,(1, 3, N'02/10/2018', '53')
+	,(1, 1, N'05/09/2018', '17')
+	,(2, 3, N'17/09/2018', '80')
+	,(2, 2, N'13/09/2018', '740')
+	,(3, 1, N'14/10/2018', '13')
+	,(3, 2, N'06/09/2018', '764')
 GO
 
-EXEC sp_changedbowner 'sa'	--яЛЕМЮ БКЮДЕКЭЖЮ ДКЪ ОНЯРПНЕМХЪ ДХЮЦПЮЛЛ
+SELECT FORMAT(Kirilov.Measurments.DateAndTime, 'd', 'ru-ru') AS п■п╟я┌п╟
+,AVG(Kirilov.Measurments.Value) AS п≤п╥п╪п╣я─п╣п╫п╦я▐
+FROM Kirilov.Measurments WHERE Kirilov.Measurments.Id_mt = 1 GROUP BY DateAndTime
+GO
+
+SELECT Kirilov.Stations.Name AS п║я┌п╟п╫я├п╦я▐
+, FORMAT(Kirilov.Measurments.DateAndTime, 'd', 'ru-ru') AS п■п╟я┌п╟
+, Kirilov.Stations.Adress AS п░п╢я─п╣я│
+, Kirilov.Measurments.Value AS п≤п╥п╪п╣я─п╣п╫п╦я▐
+FROM Kirilov.Measurments inner JOIN Kirilov.MeasurmentsTypes ON Kirilov.Measurments.Id_mt=Kirilov.MeasurmentsTypes.mt_Id inner JOIN Kirilov.Stations ON Kirilov.Measurments.Id_s=Kirilov.Stations.s_Id 
+GO
+
+EXEC sp_changedbowner 'sa'	--п║п╪п╣п╫п╟ п╡п╩п╟п╢п╣п╩я▄я├п╟ п╢п╩я▐ п©п╬я│я┌я─п╬п╣п╫п╦я▐ п╢п╦п╟пЁя─п╟п╪п╪
