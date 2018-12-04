@@ -138,6 +138,7 @@ INSERT INTO [KB301_Kirilov].Kirilov.Measurments
 	,(3, 2, N'06/09/2018', '764')
 GO
 
+--SELECT * from Kirilov.MeasurmentsTypes
 SELECT FORMAT(Kirilov.Measurments.DateAndTime, 'd', 'ru-ru') AS Дата
 ,AVG(Kirilov.Measurments.Value) AS Измерения
 FROM Kirilov.Measurments WHERE Kirilov.Measurments.Id_mt = 1 GROUP BY DateAndTime
@@ -147,6 +148,7 @@ SELECT Kirilov.Stations.Name AS Станция
 , FORMAT(Kirilov.Measurments.DateAndTime, 'd', 'ru-ru') AS Дата
 , Kirilov.Stations.Adress AS Адрес
 , Kirilov.Measurments.Value AS Измерения
+, Kirilov.MeasurmentsTypes.UnitsType AS Тип_измерения
 FROM Kirilov.Measurments inner JOIN Kirilov.MeasurmentsTypes ON Kirilov.Measurments.Id_mt=Kirilov.MeasurmentsTypes.mt_Id inner JOIN Kirilov.Stations ON Kirilov.Measurments.Id_s=Kirilov.Stations.s_Id 
 GO
 
