@@ -89,7 +89,7 @@ CREATE TABLE [KB301_Kirilov].Kirilov.Measurments
 	Id_s smallint NOT NULL,
 	Id_mt smallint NOT NULL,
 	DateAndTime datetime  NOT NULL,
-	Value smallint NOT NULL
+	Value decimal(10, 5) NOT NULL
 )
 GO
 
@@ -127,29 +127,50 @@ GO
 INSERT INTO [KB301_Kirilov].Kirilov.Measurments
 	(Id_s, Id_mt, DateAndTime, Value)
 	VALUES
-	(1, 1, N'13/09/2018', '12')
+	(1, 1, N'13/09/2018', '12.53')
 	,(1, 1, N'13/09/2018', '14')
 	,(1, 2, N'13/09/2018', '760')
 	,(1, 3, N'02/10/2018', '53')
 	,(1, 1, N'05/09/2018', '17')
 	,(2, 3, N'17/09/2018', '80')
 	,(2, 2, N'13/09/2018', '740')
-	,(3, 1, N'14/10/2018', '13')
+	,(3, 1, N'13/09/2018', '13')
 	,(3, 2, N'06/09/2018', '764')
 GO
 
---SELECT * from Kirilov.MeasurmentsTypes
-SELECT FORMAT(Kirilov.Measurments.DateAndTime, 'd', 'ru-ru') AS Дата
-,AVG(Kirilov.Measurments.Value) AS Измерения
+SELECT FORMAT(Kirilov.Measurments.DateAndTime, 'D', 'ru-ru') AS Дата
+,CONVERT(decimal(5,1), AVG(Kirilov.Measurments.Value)) AS Измерения
 FROM Kirilov.Measurments WHERE Kirilov.Measurments.Id_mt = 1 GROUP BY DateAndTime
 GO
 
 SELECT Kirilov.Stations.Name AS Станция
-, FORMAT(Kirilov.Measurments.DateAndTime, 'd', 'ru-ru') AS Дата
+, FORMAT(Kirilov.Measurments.DateAndTime, 'D', 'ru-ru') AS Дата
 , Kirilov.Stations.Adress AS Адрес
-, Kirilov.Measurments.Value AS Измерения
+, CONVERT(decimal(5,1), Kirilov.Measurments.Value) AS Измерения
 , Kirilov.MeasurmentsTypes.UnitsType AS Тип_измерения
 FROM Kirilov.Measurments inner JOIN Kirilov.MeasurmentsTypes ON Kirilov.Measurments.Id_mt=Kirilov.MeasurmentsTypes.mt_Id inner JOIN Kirilov.Stations ON Kirilov.Measurments.Id_s=Kirilov.Stations.s_Id 
 GO
 
-EXEC sp_changedbowner 'sa'	--Смена владельца для построения диаграмм
+SELECT Kirilov.Stations.Name AS Станция
+, FORMAT(Kirilov.Measurments.DateAndTime, 'D', 'ru-ru') AS Дата
+, Kirilov.Stations.Adress AS Адрес
+, CONVERT(decimal(5,1), Kirilov.Measurments.Value) AS Измерения
+, Kirilov.MeasurmentsTypes.UnitsType AS Тип_измерения
+Into Kirilov.StationsUpt
+FROM Kirilov.Measurments inner JOIN Kirilov.MeasurmentsTypes ON Kirilov.Measurments.Id_mt=Kirilov.MeasurmentsTypes.mt_Id inner JOIN Kirilov.Stations ON Kirilov.Measurments.Id_s=Kirilov.Stations.s_Id 
+GO
+
+Select * From Kirilov.StationsUpt
+GO
+
+Select Kirilov.StationsUpt.Станция AS Станция
+--, Kirilov.StationsUpt.Дата AS Дата
+, CONVERT(decimal(5,1), AVG(Kirilov.StationsUpt.Измерения)) AS Среднее_значение
+, Kirilov.StationsUpt.Тип_измерения AS Тип_измерения
+From Kirilov.StationsUpt
+Where (Kirilov.StationsUpt.Тип_измерения = '°C' 
+or Kirilov.StationsUpt.Тип_измерения = 'мм. рт. ст.' 
+or Kirilov.StationsUpt.Тип_измерения = '%')
+--and Kirilov.StationsUpt.Дата = N'13 сентября 2018 г.'
+group by Станция, Тип_измерения
+Go
