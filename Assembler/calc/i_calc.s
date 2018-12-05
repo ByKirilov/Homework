@@ -8,7 +8,7 @@ op_add:	.ascii "+"
 op_sub:	.ascii "-"
 op_mov:	.ascii "*"
 op_div:	.ascii "/"
-line_breake:	.ascii "\n"
+line_break:	.ascii "\n"
 .text
 _start:
 	mov 	$1, %rcx
@@ -75,7 +75,7 @@ _numprint:
 	pop 	%rcx
 	dec	%rcx
 	jnz	2b
-	lea 	line_breake, %rsi
+	lea 	line_break, %rsi
 	mov 	$1, %rax
 	mov 	$1, %rdi
 	mov 	$1, %rdx

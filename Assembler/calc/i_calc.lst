@@ -13,7 +13,7 @@ GAS LISTING i_calc.s 			page 1
    8 000c 2D       	op_sub:	.ascii "-"
    9 000d 2A       	op_mov:	.ascii "*"
   10 000e 2F       	op_div:	.ascii "/"
-  11 000f 0A       	line_breake:	.ascii "\n"
+  11 000f 0A       	line_break:	.ascii "\n"
   12              	.text
   13              	_start:
   14 0000 48C7C101 		mov 	$1, %rcx
@@ -102,7 +102,7 @@ GAS LISTING i_calc.s 			page 1
   75 00d6 59       		pop 	%rcx
   76 00d7 48FFC9   		dec	%rcx
   77 00da 75D6     		jnz	2b
-  78 00dc 488D3425 		lea 	line_breake, %rsi
+  78 00dc 488D3425 		lea 	line_break, %rsi
   78      00000000 
   79 00e4 48C7C001 		mov 	$1, %rax
   79      000000
@@ -125,7 +125,7 @@ DEFINED SYMBOLS
             i_calc.s:8      .data:000000000000000c op_sub
             i_calc.s:9      .data:000000000000000d op_mov
             i_calc.s:10     .data:000000000000000e op_div
-            i_calc.s:11     .data:000000000000000f line_breake
+            i_calc.s:11     .data:000000000000000f line_break
             i_calc.s:33     .text:0000000000000049 add_op
             i_calc.s:37     .text:0000000000000056 sub_op
             i_calc.s:41     .text:0000000000000063 mul_op
