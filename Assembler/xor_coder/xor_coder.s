@@ -1,5 +1,5 @@
 .data
-.set	N, 100
+# .set	N, 100
 .set	OPEN, 2
 .set 	CLOSE, 3
 .set	READ, 0
@@ -7,6 +7,12 @@
 .set	O_RDONLY, 0
 .set 	O_WRONLY, 1
 .set	EXIT, 60
+enc_prefix:	.ascii "enc_"
+lenc_prefix = . - enc_prefix
+filename: 	.skip 20
+enc_filename:	.skip 24
+key:	.ascii "qwerty"
+N 	= . - key
 buffer:	.skip N
 enc_text:	.skip N
 first_fd:	.quad 0
@@ -16,11 +22,16 @@ lerr_messg = . - err_messg
 .text
 .globl _start
 _start:
+	mov	$2, %rdx
+	mov	(%rsp, %rdx, 8), filename
+
 	mov	$O_RDONLY, %rsi
+	lea 	filename, %rdi
 	call 	_open
 	mov 	%rax, first_fd
 
 	mov 	$O_WRONLY, %rsi
+	lea 	enc_prefix, %rdi
 	call	_open
 	mov 	%rax, second_fd
 _loop:
@@ -36,11 +47,10 @@ _loop:
 	call 	_close
 	mov	second_fd, %rdi
 	jmp 	_exit
-
+_encode:
 
 _open:
 	mov 	$OPEN, %rax
-	lea 	filename, %rdi
 	syscall
 	cmp	$0, %rax
 	jl	_error
