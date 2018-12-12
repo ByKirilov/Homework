@@ -16,24 +16,12 @@ GO
 USE [KB301_Kirilov]
 GO
 
---IF EXISTS(
---  SELECT *
---    FROM sys.schemas
---   WHERE name = N'K'
---) 
--- DROP SCHEMA Kirilov
---GO
-
---CREATE SCHEMA K
---GO
--- ------------------------------------------------
-
 create table CarInfo (
     CarNumber nvarchar(9) primary key
     constraint CHK_Number check
-    (CarNumber like '[ABCEHKMOPTÀÂÑÅÍÊÌÎĞÒ][0-9][0-9][0-9][ABCEHKMOPTÀÂÑÅÍÊÌÎĞÒ][ABCEHKMOPTÀÂÑÅÍÊÌÎĞÒ][127][0-9][0-9]'
-	or CarNumber like '[ABCEHKMOPTÀÂÑÅÍÊÌÎĞÒ][0-9][0-9][0-9][ABCEHKMOPTÀÂÑÅÍÊÌÎĞÒ][ABCEHKMOPTÀÂÑÅÍÊÌÎĞÒ][0-9][0-9]')
-);
+    ((CarNumber like '[ABCEHKMOPTĞĞ’Ğ¡Ğ•ĞĞšĞœĞĞ Ğ¢][0-9][0-9][0-9][ABCEHKMOPTĞĞ’Ğ¡Ğ•ĞĞšĞœĞĞ Ğ¢][ABCEHKMOPTĞĞ’Ğ¡Ğ•ĞĞšĞœĞĞ Ğ¢][127][0-9][0-9]'
+	or CarNumber like '[ABCEHKMOPTĞĞ’Ğ¡Ğ•ĞĞšĞœĞĞ Ğ¢][0-9][0-9][0-9][ABCEHKMOPTĞĞ’Ğ¡Ğ•ĞĞšĞœĞĞ Ğ¢][ABCEHKMOPTĞĞ’Ğ¡Ğ•ĞĞšĞœĞĞ Ğ¢][0-9][0-9]')
+	and SUBSTRING(CarNumber, 2, 3) != '000'));
 GO
 
 create table RegionCode (
@@ -49,7 +37,7 @@ create table PostRegionCode (
     references RegionCode(RegCode)
 );
 
-create table ÑarsRegistration (
+create table Ğ¡arsRegistration (
     PostId int,  
     ArrivalTime time,
     IsDirectionOut bit,
@@ -63,11 +51,11 @@ create table ÑarsRegistration (
 GO
 
 CREATE TRIGGER ArrivalTrigger
-on ÑarsRegistration
+on Ğ¡arsRegistration
 after insert
 as if exists (
     select * from 
-    (select top 1 reg.IsDirectionOut as res from ÑarsRegistration as reg, inserted
+    (select top 1 reg.IsDirectionOut as res from Ğ¡arsRegistration as reg, inserted
         where inserted.ArrivalTime > reg.ArrivalTime 
             and inserted.CarNumber = reg.CarNumber
         order by reg.ArrivalTime desc
@@ -77,7 +65,7 @@ as if exists (
   RAISERROR ('double in', 16, 1);
   if exists (
     select * from 
-    (select top 1 reg.IsDirectionOut as res from ÑarsRegistration as reg, inserted
+    (select top 1 reg.IsDirectionOut as res from Ğ¡arsRegistration as reg, inserted
         where inserted.ArrivalTime > reg.ArrivalTime 
             and inserted.CarNumber = reg.CarNumber
         order by reg.ArrivalTime desc
@@ -90,19 +78,28 @@ GO
 
 insert into CarInfo values ('A123BC196'),
                            ('A124BC102'),
-                           ('A124BC174');
+                           ('A124BC174'),
+						   ('A150BC134'),
+						   ('A007BC196'),
+						   ('A115BC96'),
+						   ('A566BC02'),
+						   ('A256BC34'),
+						   ('A512BC02');
+
+insert into CarInfo values ('c000AB33');
+insert into CarInfo values ('E1111AE174');
 
 insert into RegionCode values 
-  ('102', N'Ğåñïóáëèêà Áàøêîğòîñòàí'),
-  ('02', N'Ğåñïóáëèêà Áàøêîğòîñòàí'),
-  ('196', N'Ñâåğäëîâñêàÿ îáëàñòü'),
-  ('96', N'Ñâåğäëîâñêàÿ îáëàñòü'),
-  ('174', N'×åëÿáèíñêàÿ îáëàñòü'),
-  ('74', N'×åëÿáèíñêàÿ îáëàñòü'),
-  ('134', N'Âîëãîãğàäñêàÿ îáëàñòü'),
-  ('34', N'Âîëãîãğàäñêàÿ îáëàñòü'),
-  ('124', N'Êğàñíîÿğñêèé êğàé'),
-  ('24', N'Êğàñíîÿğñêèé êğàé');
+  ('102', N'Ğ ĞµÑĞ¿ÑƒĞ±Ğ»Ğ¸ĞºĞ° Ğ‘Ğ°ÑˆĞºĞ¾Ñ€Ñ‚Ğ¾ÑÑ‚Ğ°Ğ½'),
+  ('02', N'Ğ ĞµÑĞ¿ÑƒĞ±Ğ»Ğ¸ĞºĞ° Ğ‘Ğ°ÑˆĞºĞ¾Ñ€Ñ‚Ğ¾ÑÑ‚Ğ°Ğ½'),
+  ('196', N'Ğ¡Ğ²ĞµÑ€Ğ´Ğ»Ğ¾Ğ²ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'),
+  ('96', N'Ğ¡Ğ²ĞµÑ€Ğ´Ğ»Ğ¾Ğ²ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'),
+  ('174', N'Ğ§ĞµĞ»ÑĞ±Ğ¸Ğ½ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'),
+  ('74', N'Ğ§ĞµĞ»ÑĞ±Ğ¸Ğ½ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'),
+  ('134', N'Ğ’Ğ¾Ğ»Ğ³Ğ¾Ğ³Ñ€Ğ°Ğ´ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'),
+  ('34', N'Ğ’Ğ¾Ğ»Ğ³Ğ¾Ğ³Ñ€Ğ°Ğ´ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'),
+  ('124', N'ĞšÑ€Ğ°ÑĞ½Ğ¾ÑÑ€ÑĞºĞ¸Ğ¹ ĞºÑ€Ğ°Ğ¹'),
+  ('24', N'ĞšÑ€Ğ°ÑĞ½Ğ¾ÑÑ€ÑĞºĞ¸Ğ¹ ĞºÑ€Ğ°Ğ¹');
 
 insert into PostRegionCode values 
   (1, '196'), 
@@ -110,64 +107,77 @@ insert into PostRegionCode values
   (3, '196'),
   (4, '196');
 
-insert into ÑarsRegistration values (1, '11:00', 0, 'A123BC196');
-insert into ÑarsRegistration values (1, '13:00', 0, 'A124BC102');
--- insert into ÑarsRegistration values (1, '14:00', 0, 'A124BC102');
-insert into ÑarsRegistration values (1, '14:00', 1, 'A123BC196');
-insert into ÑarsRegistration values (2, '15:00', 1, 'A124BC102');
-insert into ÑarsRegistration values (1, '16:00', 1, 'A124BC174');
--- insert into ÑarsRegistration values (1, '18:00', 1, 'A124BC174');
+insert into Ğ¡arsRegistration values (1, '10:00', 1, 'A007BC196');
+insert into Ğ¡arsRegistration values (1, '11:00', 0, 'A123BC196');
+insert into Ğ¡arsRegistration values (1, '11:10', 1, 'A566BC02');
+insert into Ğ¡arsRegistration values (1, '12:00', 0, 'A150BC134');
+insert into Ğ¡arsRegistration values (1, '13:00', 0, 'A124BC102');
+insert into Ğ¡arsRegistration values (1, '14:00', 1, 'A123BC196');
+insert into Ğ¡arsRegistration values (2, '15:00', 1, 'A124BC102');
+insert into Ğ¡arsRegistration values (2, '15:30', 1, 'A150BC134');
+insert into Ğ¡arsRegistration values (2, '15:40', 1, 'A256BC34');
+insert into Ğ¡arsRegistration values (1, '16:00', 1, 'A124BC174');
+insert into Ğ¡arsRegistration values (1, '17:00', 0, 'A007BC196');
+insert into Ğ¡arsRegistration values (1, '17:05', 0, 'A566BC02');
+insert into Ğ¡arsRegistration values (1, '17:10', 0, 'A512BC02');
+insert into Ğ¡arsRegistration values (1, '17:15', 0, 'A512BC02');
 GO
 
 
 select * from CarInfo;
 select * from RegionCode order by RegionName;
-select * from ÑarsRegistration;
+select * from Ğ¡arsRegistration;
+GO
 
-go
-declare @postRegion varchar(3) = (select RegCode from RegionCode where RegionName='Ñâåğäëîâñêàÿ îáëàñòü')
-  
+declare @postRegion table (RegCode varchar(3)) 
+insert into @postRegion 
+	select RegCode from RegionCode where RegionName='Ğ¡Ğ²ĞµÑ€Ğ´Ğ»Ğ¾Ğ²ÑĞºĞ°Ñ Ğ¾Ğ±Ğ»Ğ°ÑÑ‚ÑŒ'
+
 declare @transitCars table (CarNumber varchar(9))
 insert into @transitCars 
-  select reg1.CarNumber from ÑarsRegistration reg1 
-  where SUBSTRING(reg1.CarNumber, 7, 9) != @postRegion and SUBSTRING(reg1.CarNumber, 7, 8) != @postRegion
-    and exists(select * from ÑarsRegistration reg2 where reg1.CarNumber = reg2.CarNumber
+  select reg1.CarNumber from Ğ¡arsRegistration reg1 
+  where not exists (select * from @postRegion post where SUBSTRING(reg1.CarNumber, 7, 3) = post.RegCode or SUBSTRING(reg1.CarNumber, 7, 2) = post.RegCode)
+    and exists(select * from Ğ¡arsRegistration reg2 where reg1.CarNumber = reg2.CarNumber
              and reg1.ArrivalTime < reg2.ArrivalTime
              and reg2.IsDirectionOut = 1
              and reg1.IsDirectionOut = 0
              and reg1.PostId != reg2.PostId)
 
 declare @nonresidentCars table (CarNumber varchar(9)) 
-insert into @nonresidentCars select reg1.CarNumber from ÑarsRegistration reg1
-where exists(select * from ÑarsRegistration reg2 where reg1.CarNumber = reg2.CarNumber
+insert into @nonresidentCars select reg1.CarNumber from Ğ¡arsRegistration reg1
+where exists(select * from Ğ¡arsRegistration reg2 where reg1.CarNumber = reg2.CarNumber
            and reg1.ArrivalTime < reg2.ArrivalTime
            and reg2.IsDirectionOut = 1
            and reg1.IsDirectionOut = 0
            and reg1.PostId = reg2.PostId)
 
+--select CarNumber as 'nonresident cars', regs.RegionName as 'Region' from @nonresidentCars car join RegionCode regs on (SUBSTRING(car.CarNumber, 7, 3) = regs.RegCode or SUBSTRING(car.CarNumber, 7, 2) = regs.RegCode);
+
 declare @localCars table (CarNumber varchar(9))
-insert into @localCars select reg1.CarNumber from ÑarsRegistration reg1
-where SUBSTRING(reg1.CarNumber, 7, 9) = @postRegion or SUBSTRING(reg1.CarNumber, 7, 8) = @postRegion 
-and exists(select * from ÑarsRegistration reg2 
+insert into @localCars select reg1.CarNumber from Ğ¡arsRegistration reg1
+where exists (select * from @postRegion post where SUBSTRING(reg1.CarNumber, 7, 3) = post.RegCode or SUBSTRING(reg1.CarNumber, 7, 2) = post.RegCode) 
+and exists(select * from Ğ¡arsRegistration reg2 
            where reg1.CarNumber = reg2.CarNumber
                and reg1.ArrivalTime < reg2.ArrivalTime
-               and reg2.IsDirectionOut = 1
-               and reg1.IsDirectionOut = 0)
+               and reg2.IsDirectionOut = 0
+               and reg1.IsDirectionOut = 1)
+
+select CarNumber as 'local cars' from @localCars
 
 
 declare @otherCars table(CarNumber varchar(9))
-insert into @otherCars select distinct reg.CarNumber from ÑarsRegistration reg
+insert into @otherCars select distinct reg.CarNumber from Ğ¡arsRegistration reg
 	WHERE
 		reg.CarNumber not in (select * from @transitCars) and
 		reg.CarNumber not in (select * from @nonresidentCars) and
 		reg.CarNumber not in (select * from @localCars)
 
---select CarNumber as 'transit cars' from @transitCars
---select CarNumber as 'nonresident cars' from @nonresidentCars
---select CarNumber as 'local cars' from @localCars
---select CarNumber as 'other cars' from @otherCars
+select CarNumber as 'transit cars' from @transitCars
+
+
+select CarNumber as 'other cars' from @otherCars
 
 select count(distinct CarNumber) as 'Number of local cars' from @localCars;
-select count(distinct CarNumber) as 'total number of cars' from ÑarsRegistration;
-select distinct reg.CarNumber from ÑarsRegistration reg 
+select count(distinct CarNumber) as 'total number of cars' from Ğ¡arsRegistration;
+select distinct reg.CarNumber from Ğ¡arsRegistration reg 
   join CarInfo on CarInfo.CarNumber = reg.CarNumber;
