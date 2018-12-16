@@ -3,84 +3,162 @@ GAS LISTING sb.s 			page 1
 
    1              	.globl _start
    2              	.data
-   3 0000 00000000 	tmp_number:		.skip 100
-   3      00000000 
-   3      00000000 
-   3      00000000 
-   3      00000000 
-   4 0064 23       	unary_minus:	.ascii "#"
-   5 0065 77       	other: 	.ascii "w"
-   6 0066 2D0A     	bad:	.ascii "-\n"
-   7 0068 23313233 	my_str:	.ascii "#123"
-   8 006c 21       	zero:	.byte 0x21
-   9              	.text
-  10              	_start:
-  11 0000 488D3425 		lea	my_str, %rsi
-  11      00000000 
-  12 0008 488D3C25 		lea	tmp_number, %rdi
-  12      00000000 
-  13 0010 48C7C104 		mov 	$4, %rcx
-  13      000000
-  14 0017 F3A4     		rep movsb
-  15 0019 E8030000 		call 	_parse_to_int
-  15      00
-  16 001e 90       		nop
-  17 001f EB46     		jmp 	_exit
-  18              	
-  19              	_parse_to_int:
-  20 0021 488D3425 		lea 	tmp_number, %rsi
-  20      00000000 
-  21 0029 488D3C25 		lea 	unary_minus, %rdi
-  21      00000000 
-  22 0031 A6       		cmpsb
-  23 0032 7507     		jnz	_ii1
-  24 0034 66BF0100 		mov 	$1, %di
-  25 0038 48FFC6   		inc	%rsi
-  26              	_ii1:
-  27 003b 48FFCE   		dec 	%rsi
-  28 003e 4831C0   		xorq 	%rax, %rax
-  29 0041 48C7C30A 		mov 	$10, %rbx
-  29      000000
-  30              	_ii2:
-  31 0048 8A0E     		mov 	(%rsi), %cl
-  32 004a 80F900   		cmp 	$0, %cl
-  33 004d 740E     		jz 	_end_number
-  34              	
-  35 004f 80E930   		sub 	$'0', %cl
-  36 0052 48F7E3   		mul 	%rbx
-  37 0055 4801C8   		add 	%rcx, %rax
-  38 0058 48FFC6   		inc 	%rsi
-  39 005b EBEB     		jmp 	_ii2
-  40              	_end_number:
-  41 005d 6683FF01 		cmp 	$1, %di
-  42 0061 7503     		jnz 	_ii3
-  43 0063 48F7D8   		neg 	%rax
-  44              	_ii3:
-  45 0066 C3       		ret
-  46              	
+   3              	.set 	N, 10
+   4              	.set	WRITE, 1
+   5 0000 00000000 	empty:	.skip N
+   5      00000000 
+   5      0000
+   6 000a 00000000 	tmp_number:		.skip N
+   6      00000000 
+   6      0000
+   7 0014 00       	operands_count: 	.byte 0x0
+   8 0015 23       	unary_minus:	.ascii "#"
+   9 0016 2D       	minus: 	.ascii "-"
+  10 0017 77       	other: 	.ascii "w"
+  11 0018 2D0A     	bad:	.ascii "-\n"
+  12 001a 23313233 	my_str:	.ascii "#123"
+  13 001e 21       	zero:	.ascii "!"
+  14 001f 0A       	n_l: 	.ascii "\n"
+  15 0020 30313233 	char_tab:	.ascii "0123456789"
+  15      34353637 
+  15      3839
+  16              	.text
+  17              	_start:
+  18 0000 488D3425 		lea 	my_str, %rsi
+  18      00000000 
+  19 0008 488D3C25 	 	lea 	tmp_number, %rdi
+  19      00000000 
+  20 0010 48C7C104 	 	mov 	$4, %rcx
+  20      000000
+  21 0017 F3A4     	 	rep movsb
+  22 0019 E8040000 	 	call  	_parse_to_int
+  22      00
+  23 001e EB51     	 	jmp 	_numprint
+  24 0020 EB46     	 	jmp  	_exit
+  25              	
+  26              	_parse_to_int:
+  27 0022 488D3425 	 	lea  	tmp_number, %rsi # Берём адрес начала строки с числом
+  27      00000000 
+  28 002a 488D3C25 	 	lea  	unary_minus, %rdi # Адрес символа, отвечающего за унарный �
+  28      00000000 
+  29 0032 A6       	 	cmpsb    # Проверяем, не является ли первый символ унарны�
+  30 0033 7507     	 	jnz 	_ii1
+  31 0035 66BF0100 	 	mov  	$1, %di   # Если является, ставим флаг
+  32 0039 48FFC6   	 	inc 	%rsi   # И пропускаем этот минус
+  33              	_ii1:
+  34 003c 48FFCE   	 	dec  	%rsi
+  35 003f 4831C0   	 	xorq  	%rax, %rax
+  36 0042 48C7C30A 	 	mov  	$10, %rbx  # Основание СС
+  36      000000
+  37              	_ii2:
+  38 0049 8A0E     	 	mov  	(%rsi), %cl   # Берём символ из буфера
+  39 004b 80F900   	 	cmp  	$0, %cl   # проверяем, не конец ли это строки
+  40 004e 740E     	 	jz  	_end_number   
+  41              	
+  42 0050 80E930   	 	sub  	$'0', %cl   # Превращаем символ в число
+  43 0053 48F7E3   	 	mul  	%rbx    # Умножаем то, что уже есть на основание СС
+  44 0056 4801C8   	 	add  	%rcx, %rax   # Добавляем к тому, что уже есть, то что полу
 GAS LISTING sb.s 			page 2
 
 
-  47              	_exit:
-  48 0067 48C7C03C 		mov 	$60, %rax
-  48      000000
-  49 006e 0F05     		syscall...
+  45 0059 48FFC6   	 	inc  	%rsi   # Указатель на следующий символ
+  46 005c EBEB     	 	jmp  	_ii2    # Повторяем
+  47              	_end_number:
+  48 005e 6683FF01 	 	cmp  	$1, %di   # Все символы из строки обработаны. Если уста
+  49 0062 7503     	 	jnz  	_ii3
+  50 0064 48F7D8   	 	neg  	%rax   # делаем число отрицательным
+  51              	_ii3:
+  52 0067 C3       	 	ret
+  53              	# По итогу число лешит в RAX
+  54              	
+  55              	_exit:
+  56 0068 48C7C03C 	 	mov  $60, %rax
+  56      000000
+  57 006f 0F05     	 	syscall
+  58              	
+  59              	_numprint:
+  60 0071 4883F800 		cmp 	$0, %rax
+  61 0075 7D23     		jge 	_0b
+  62 0077 50       		pushq 	%rax
+  63 0078 48C7C001 		mov 	$WRITE, %rax
+  63      000000
+  64 007f 48C7C701 		mov 	$1, %rdi
+  64      000000
+  65 0086 48C7C600 		mov 	$minus, %rsi
+  65      000000
+  66 008d 48C7C201 		mov 	$1, %rdx
+  66      000000
+  67 0094 0F05     		syscall
+  68 0096 58       		popq 	%rax
+  69 0097 48F7D8   		neg 	%rax
+  70              	_0b:
+  71 009a 4831C9   		xor	%rcx, %rcx
+  72 009d 48C7C30A 		movq	$10, %rbx
+  72      000000
+  73              	_1b:
+  74 00a4 4831D2   		xorq	%rdx, %rdx
+  75 00a7 48F7F3   		div	%rbx
+  76 00aa 52       		pushq	%rdx
+  77 00ab 48FFC1   		inc	%rcx
+  78 00ae 4885C0   		testq	%rax, %rax
+  79 00b1 75F1     		jnz	_1b
+  80              	_2b:
+  81 00b3 58       		popq	%rax
+  82 00b4 488D3425 		lea	char_tab, %rsi
+  82      00000000 
+  83 00bc 4801C6   		add 	%rax, %rsi
+  84 00bf 51       		push 	%rcx
+  85 00c0 48C7C001 		mov 	$WRITE, %rax
+  85      000000
+  86 00c7 48C7C701 		mov 	$1, %rdi
+  86      000000
+  87 00ce 48C7C201 		mov 	$1, %rdx
+  87      000000
+  88 00d5 0F05     		syscall
+  89 00d7 59       		pop 	%rcx
+  90 00d8 48FFC9   		dec	%rcx
+  91 00db 75D6     		jnz	_2b
 GAS LISTING sb.s 			page 3
 
 
+  92 00dd 488D3425 		lea 	n_l, %rsi
+  92      00000000 
+  93 00e5 48C7C001 		mov 	$WRITE, %rax
+  93      000000
+  94 00ec 48C7C701 		mov 	$1, %rdi
+  94      000000
+  95 00f3 48C7C201 		mov 	$1, %rdx
+  95      000000
+  96 00fa 0F05     		syscall
+  97 00fc E967FFFF 		jmp	_exit...
+  97      FF
+GAS LISTING sb.s 			page 4
+
+
 DEFINED SYMBOLS
-                sb.s:10     .text:0000000000000000 _start
-                sb.s:3      .data:0000000000000000 tmp_number
-                sb.s:4      .data:0000000000000064 unary_minus
-                sb.s:5      .data:0000000000000065 other
-                sb.s:6      .data:0000000000000066 bad
-                sb.s:7      .data:0000000000000068 my_str
-                sb.s:8      .data:000000000000006c zero
-                sb.s:19     .text:0000000000000021 _parse_to_int
-                sb.s:47     .text:0000000000000067 _exit
-                sb.s:26     .text:000000000000003b _ii1
-                sb.s:30     .text:0000000000000048 _ii2
-                sb.s:40     .text:000000000000005d _end_number
-                sb.s:44     .text:0000000000000066 _ii3
+                sb.s:17     .text:0000000000000000 _start
+                sb.s:3      *ABS*:000000000000000a N
+                sb.s:4      *ABS*:0000000000000001 WRITE
+                sb.s:5      .data:0000000000000000 empty
+                sb.s:6      .data:000000000000000a tmp_number
+                sb.s:7      .data:0000000000000014 operands_count
+                sb.s:8      .data:0000000000000015 unary_minus
+                sb.s:9      .data:0000000000000016 minus
+                sb.s:10     .data:0000000000000017 other
+                sb.s:11     .data:0000000000000018 bad
+                sb.s:12     .data:000000000000001a my_str
+                sb.s:13     .data:000000000000001e zero
+                sb.s:14     .data:000000000000001f n_l
+                sb.s:15     .data:0000000000000020 char_tab
+                sb.s:26     .text:0000000000000022 _parse_to_int
+                sb.s:59     .text:0000000000000071 _numprint
+                sb.s:55     .text:0000000000000068 _exit
+                sb.s:33     .text:000000000000003c _ii1
+                sb.s:37     .text:0000000000000049 _ii2
+                sb.s:47     .text:000000000000005e _end_number
+                sb.s:51     .text:0000000000000067 _ii3
+                sb.s:70     .text:000000000000009a _0b
+                sb.s:73     .text:00000000000000a4 _1b
+                sb.s:80     .text:00000000000000b3 _2b
 
 NO UNDEFINED SYMBOLS
