@@ -1,0 +1,195 @@
+GAS LISTING xor_coder.s 			page 1
+
+
+   1              	.data
+   2              	# .set	N, 100
+   3              	.set	OPEN, 2
+   4              	.set 	CLOSE, 3
+   5              	.set	READ, 0
+   6              	.set	WRITE, 1
+   7              	.set	O_RDONLY, 0
+   8              	.set 	O_WRONLY, 1
+   9              	.set	EXIT, 60
+  10 0000 656E635F 	enc_prefix:	.ascii "enc_"
+  11              	lenc_prefix = . - enc_prefix
+  12 0004 00000000 	filename: 	.skip 20
+  12      00000000 
+  12      00000000 
+  12      00000000 
+  12      00000000 
+  13              	lfilename = . - filename
+  14 0018 00000000 	enc_filename:	.skip 24
+  14      00000000 
+  14      00000000 
+  14      00000000 
+  14      00000000 
+  15 0030 71776572 	key:	.ascii "qwerty"
+  15      7479
+  16              	N 	= . - key
+  17 0036 00000000 	buffer:	.skip N
+  17      0000
+  18 003c 00000000 	enc_text:	.skip N
+  18      0000
+  19 0042 00000000 	first_fd:	.quad 0
+  19      00000000 
+  20 004a 00000000 	second_fd:	.quad 0
+  20      00000000 
+  21 0052 536F6D65 	err_messg:	.ascii "Something wrong\n"
+  21      7468696E 
+  21      67207772 
+  21      6F6E670A 
+  22              	lerr_messg = . - err_messg
+  23              	.text
+  24              	.globl _start
+  25              	_start:
+  26 0000 48C7C202 		mov	$2, %rdx
+  26      000000
+  27 0007 488B3CD4 		mov	(%rsp, %rdx, 8), %rdi
+  28 000b 48C7C105 		mov 	$5, %rcx
+  28      000000
+  29 0012 488D3425 		lea 	filename, %rsi
+  29      00000000 
+  30 001a F3A4     		rep movsb
+  31              	#	mov 	%rdi, filename
+  32              	
+  33 001c 48C7C600 		mov	$O_RDONLY, %rsi
+  33      000000
+  34 0023 488D3C25 		lea 	filename, %rdi
+  34      00000000 
+  35 002b E87B0000 		call 	_open
+  35      00
+GAS LISTING xor_coder.s 			page 2
+
+
+  36 0030 48890425 		mov 	%rax, first_fd
+  36      00000000 
+  37              	
+  38 0038 48C7C104 		mov 	$lenc_prefix, %rcx
+  38      000000
+  39 003f 488D3C25 		lea 	enc_filename, %rdi
+  39      00000000 
+  40 0047 488D3425 		lea 	enc_prefix, %rsi
+  40      00000000 
+  41 004f F3A4     		rep movsb
+  42 0051 488D3425 		lea 	filename, %rsi
+  42      00000000 
+  43 0059 48C7C114 		mov 	$lfilename, %rcx
+  43      000000
+  44 0060 F3A4     		rep movsb
+  45              	
+  46 0062 48C7C601 		mov 	$O_WRONLY, %rsi
+  46      000000
+  47 0069 488D3C25 		lea 	enc_filename, %rdi
+  47      00000000 
+  48 0071 E8350000 		call	_open
+  48      00
+  49 0076 48890425 		mov 	%rax, second_fd
+  49      00000000 
+  50              	_loop:
+  51 007e E8370000 		call	_read
+  51      00
+  52 0083 50       		push	%rax
+  53 0084 E8220000 		call 	_encode
+  53      00
+  54 0089 E84D0000 		call	_write
+  54      00
+  55 008e 58       		pop	%rax
+  56 008f 4885C0   		test 	%rax, %rax
+  57 0092 75EA     		jnz	_loop
+  58              	
+  59 0094 488B3C25 		mov	first_fd, %rdi
+  59      00000000 
+  60 009c E8570000 		call 	_close
+  60      00
+  61 00a1 488B3C25 		mov	second_fd, %rdi
+  61      00000000 
+  62 00a9 EB78     		jmp 	_exit
+  63              	_encode:
+  64              	
+  65              	_open:
+  66 00ab 48C7C002 		mov 	$OPEN, %rax
+  66      000000
+  67 00b2 0F05     		syscall
+  68 00b4 4883F800 		cmp	$0, %rax
+  69 00b8 7C48     		jl	_error
+  70              	_read:
+  71 00ba 488B3C25 		mov 	first_fd, %rdi
+  71      00000000 
+  72 00c2 48C7C000 		mov	$READ, %rax
+  72      000000
+  73 00c9 488D3425 		lea 	buffer, %rsi
+GAS LISTING xor_coder.s 			page 3
+
+
+  73      00000000 
+  74 00d1 48C7C206 		mov 	$N, %rdx
+  74      000000
+  75 00d8 0F05     		syscall
+  76 00da C3       	ret
+  77              	_write:
+  78 00db 4889C2   		mov	%rax, %rdx
+  79 00de 48C7C001 		mov	$WRITE, %rax
+  79      000000
+  80 00e5 488B3C25 		mov	second_fd, %rdi
+  80      00000000 
+  81 00ed 488D3425 		lea 	buffer, %rsi
+  81      00000000 
+  82 00f5 0F05     		syscall
+  83 00f7 C3       	ret
+  84              	_close:
+  85 00f8 48C7C003 		mov	$CLOSE, %rax
+  85      000000
+  86 00ff 0F05     		syscall
+  87 0101 C3       	ret
+  88              	_error:
+  89 0102 48C7C001 		mov	$WRITE, %rax
+  89      000000
+  90 0109 48C7C701 		mov	$1, %rdi
+  90      000000
+  91 0110 488D3425 		lea	err_messg, %rsi
+  91      00000000 
+  92 0118 48C7C210 		mov	$lerr_messg, %rdx
+  92      000000
+  93 011f 0F05     		syscall
+  94 0121 EB00     		jmp	_exit
+  95              	_exit:
+  96 0123 48C7C03C 		mov	$EXIT, %rax
+  96      000000
+  97 012a 48C7C700 		mov	$0, %rdi
+  97      000000
+  98 0131 0F05     		syscall...
+GAS LISTING xor_coder.s 			page 4
+
+
+DEFINED SYMBOLS
+         xor_coder.s:3      *ABS*:0000000000000002 OPEN
+         xor_coder.s:4      *ABS*:0000000000000003 CLOSE
+         xor_coder.s:5      *ABS*:0000000000000000 READ
+         xor_coder.s:6      *ABS*:0000000000000001 WRITE
+         xor_coder.s:7      *ABS*:0000000000000000 O_RDONLY
+         xor_coder.s:8      *ABS*:0000000000000001 O_WRONLY
+         xor_coder.s:9      *ABS*:000000000000003c EXIT
+         xor_coder.s:10     .data:0000000000000000 enc_prefix
+         xor_coder.s:11     *ABS*:0000000000000004 lenc_prefix
+         xor_coder.s:12     .data:0000000000000004 filename
+         xor_coder.s:13     *ABS*:0000000000000014 lfilename
+         xor_coder.s:14     .data:0000000000000018 enc_filename
+         xor_coder.s:15     .data:0000000000000030 key
+         xor_coder.s:16     *ABS*:0000000000000006 N
+         xor_coder.s:17     .data:0000000000000036 buffer
+         xor_coder.s:18     .data:000000000000003c enc_text
+         xor_coder.s:19     .data:0000000000000042 first_fd
+         xor_coder.s:20     .data:000000000000004a second_fd
+         xor_coder.s:21     .data:0000000000000052 err_messg
+         xor_coder.s:22     *ABS*:0000000000000010 lerr_messg
+         xor_coder.s:25     .text:0000000000000000 _start
+         xor_coder.s:65     .text:00000000000000ab _open
+         xor_coder.s:50     .text:000000000000007e _loop
+         xor_coder.s:70     .text:00000000000000ba _read
+         xor_coder.s:63     .text:00000000000000ab _encode
+         xor_coder.s:77     .text:00000000000000db _write
+         xor_coder.s:84     .text:00000000000000f8 _close
+         xor_coder.s:95     .text:0000000000000123 _exit
+         xor_coder.s:88     .text:0000000000000102 _error
+
+NO UNDEFINED SYMBOLS

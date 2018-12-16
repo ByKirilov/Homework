@@ -1,0 +1,86 @@
+GAS LISTING sb.s 			page 1
+
+
+   1              	.globl _start
+   2              	.data
+   3 0000 00000000 	tmp_number:		.skip 100
+   3      00000000 
+   3      00000000 
+   3      00000000 
+   3      00000000 
+   4 0064 23       	unary_minus:	.ascii "#"
+   5 0065 77       	other: 	.ascii "w"
+   6 0066 2D0A     	bad:	.ascii "-\n"
+   7 0068 23313233 	my_str:	.ascii "#123"
+   8 006c 21       	zero:	.byte 0x21
+   9              	.text
+  10              	_start:
+  11 0000 488D3425 		lea	my_str, %rsi
+  11      00000000 
+  12 0008 488D3C25 		lea	tmp_number, %rdi
+  12      00000000 
+  13 0010 48C7C104 		mov 	$4, %rcx
+  13      000000
+  14 0017 F3A4     		rep movsb
+  15 0019 E8030000 		call 	_parse_to_int
+  15      00
+  16 001e 90       		nop
+  17 001f EB46     		jmp 	_exit
+  18              	
+  19              	_parse_to_int:
+  20 0021 488D3425 		lea 	tmp_number, %rsi
+  20      00000000 
+  21 0029 488D3C25 		lea 	unary_minus, %rdi
+  21      00000000 
+  22 0031 A6       		cmpsb
+  23 0032 7507     		jnz	_ii1
+  24 0034 66BF0100 		mov 	$1, %di
+  25 0038 48FFC6   		inc	%rsi
+  26              	_ii1:
+  27 003b 48FFCE   		dec 	%rsi
+  28 003e 4831C0   		xorq 	%rax, %rax
+  29 0041 48C7C30A 		mov 	$10, %rbx
+  29      000000
+  30              	_ii2:
+  31 0048 8A0E     		mov 	(%rsi), %cl
+  32 004a 80F900   		cmp 	$0, %cl
+  33 004d 740E     		jz 	_end_number
+  34              	
+  35 004f 80E930   		sub 	$'0', %cl
+  36 0052 48F7E3   		mul 	%rbx
+  37 0055 4801C8   		add 	%rcx, %rax
+  38 0058 48FFC6   		inc 	%rsi
+  39 005b EBEB     		jmp 	_ii2
+  40              	_end_number:
+  41 005d 6683FF01 		cmp 	$1, %di
+  42 0061 7503     		jnz 	_ii3
+  43 0063 48F7D8   		neg 	%rax
+  44              	_ii3:
+  45 0066 C3       		ret
+  46              	
+GAS LISTING sb.s 			page 2
+
+
+  47              	_exit:
+  48 0067 48C7C03C 		mov 	$60, %rax
+  48      000000
+  49 006e 0F05     		syscall...
+GAS LISTING sb.s 			page 3
+
+
+DEFINED SYMBOLS
+                sb.s:10     .text:0000000000000000 _start
+                sb.s:3      .data:0000000000000000 tmp_number
+                sb.s:4      .data:0000000000000064 unary_minus
+                sb.s:5      .data:0000000000000065 other
+                sb.s:6      .data:0000000000000066 bad
+                sb.s:7      .data:0000000000000068 my_str
+                sb.s:8      .data:000000000000006c zero
+                sb.s:19     .text:0000000000000021 _parse_to_int
+                sb.s:47     .text:0000000000000067 _exit
+                sb.s:26     .text:000000000000003b _ii1
+                sb.s:30     .text:0000000000000048 _ii2
+                sb.s:40     .text:000000000000005d _end_number
+                sb.s:44     .text:0000000000000066 _ii3
+
+NO UNDEFINED SYMBOLS

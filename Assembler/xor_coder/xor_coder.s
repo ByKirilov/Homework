@@ -10,6 +10,7 @@
 enc_prefix:	.ascii "enc_"
 lenc_prefix = . - enc_prefix
 filename: 	.skip 20
+lfilename = . - filename
 enc_filename:	.skip 24
 key:	.ascii "qwerty"
 N 	= . - key
@@ -23,15 +24,27 @@ lerr_messg = . - err_messg
 .globl _start
 _start:
 	mov	$2, %rdx
-	mov	(%rsp, %rdx, 8), filename
+	mov	(%rsp, %rdx, 8), %rdi
+	mov 	$5, %rcx
+	lea 	filename, %rsi
+	rep movsb
+#	mov 	%rdi, filename
 
 	mov	$O_RDONLY, %rsi
 	lea 	filename, %rdi
 	call 	_open
 	mov 	%rax, first_fd
 
+	mov 	$lenc_prefix, %rcx
+	lea 	enc_filename, %rdi
+	lea 	enc_prefix, %rsi
+	rep movsb
+	lea 	filename, %rsi
+	mov 	$lfilename, %rcx
+	rep movsb
+
 	mov 	$O_WRONLY, %rsi
-	lea 	enc_prefix, %rdi
+	lea 	enc_filename, %rdi
 	call	_open
 	mov 	%rax, second_fd
 _loop:
