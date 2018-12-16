@@ -1,8 +1,3 @@
-from collections import namedtuple
-
-# Node = namedtuple('Node', ['Name', 'Adjacent_nodes'])
-# Edge = namedtuple('Edge', ['Nodes', 'Weight'])
-
 Edges_weights = {}
 Edges = set()
 Nodes = {}
