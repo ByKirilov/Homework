@@ -40,24 +40,26 @@ _end_number:
 	ret
 
 add_op:
-	mov	$f_num, %rax
-	add 	$s_num, %rax
+	popq	%rax
+	popq 	%rbx
+	add 	%rbx, %rax
 	pushq	%rax
 	ret
 sub_op:
-	mov 	$f_num, %rax
-	sub 	$s_num, %rax
+	popq	%rax
+	popq 	%rbx
+	sub 	%rbx, %rax
 	pushq	%rax
 	ret
 mul_op:
-	mov 	$f_num, %rax
-	mov 	$s_num, %rbx
+	popq	%rax
+	popq 	%rbx
 	mul 	%rbx
 	pushq	%rax
 	ret
 div_op:
-	mov 	$f_num, %rax
-	mov 	$s_num, %rbx
+	popq	%rax
+	popq 	%rbx
 	div 	%rbx
 	pushq 	%rax
 	ret
