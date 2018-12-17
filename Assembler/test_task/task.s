@@ -49,9 +49,8 @@ _parse_argument:
 	jz 	_end_argument
 
 	call 	_grasp_operation_symbol
-	call 	_execute_operation
-	cmp 	$1, %r8
-	je 	_continue_parse_argument
+	jmp 	_execute_operation
+_continue_grasp:
 	call 	_grasp_numeral
 _continue_parse_argument:
 	xor 	%r8, %r8
@@ -165,11 +164,9 @@ _execute_operation:
 	mov 	(%rsi), %cl
 	inc 	%cl
 	cmp 	$1, %cl
-#	test 	%cl, %cl
-	je 	_end_execute_operation
+	je 	_continue_grasp
 
 	call 	_push_num_to_stack
-	mov 	$1, %r8
 
 	mov 	$operation_symbol, %rsi
 	mov 	$1, %rcx
@@ -194,61 +191,61 @@ _execute_operation:
 	je	unary_minus
 	dec	%rsi
 _end_execute_operation:
-	call _clear_operation_symbol
-	ret
+	call 	_clear_operation_symbol
+	jmp 	_continue_parse_argument
 # ---------------------------------------------------
 add_op:
 	cmp	$2, %r10
 	jl 	_error
-	pop 	%rdx
+#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	add 	%rbx, %rax
 	pushq	%rax
-	push 	%rdx
+#	push 	%rdx
 	dec 	%r10
 	jmp 	_end_execute_operation
 sub_op:
 	cmp	$2, %r10
 	jl 	_error
-	pop 	%rdx
+#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	sub 	%rbx, %rax
 	pushq	%rax
-	push 	%rdx
+#	push 	%rdx
 	dec 	%r10
 	jmp 	_end_execute_operation
 mul_op:
 	cmp	$2, %r10
 	jl 	_error
-	pop 	%rdx
+#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	mul 	%rbx
 	pushq	%rax
 	push 	%rdx
-	dec 	%r10
+#	dec 	%r10
 	jmp 	_end_execute_operation
 div_op:
 	cmp	$2, %r10
 	jl 	_error
-	pop 	%rdx
+#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	div 	%rbx
 	pushq 	%rax
-	push 	%rdx
+#	push 	%rdx
 	dec 	%r10
 	jmp 	_end_execute_operation
 unary_minus:
 	cmp	$1, %r10
 	jl 	_error
-	pop 	%rdx
+#	pop 	%rdx
 	popq 	%rax
 	neg 	%rax
 	pushq 	%rax
-	push 	%rdx
+#	push 	%rdx
 	jmp 	_end_execute_operation
 # ---------------------------------------------------
 _error:
