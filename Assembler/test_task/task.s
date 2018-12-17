@@ -173,23 +173,26 @@ _execute_operation:
 	lea	op_add, %rdi
 	cmpsb
 	je	add_op
+
 	dec	%rsi
 	lea	op_sub, %di
 	cmpsb
 	je	sub_op
+
 	dec	%rsi
 	lea	op_mov, %di
 	cmpsb
 	je	mul_op
+
 	dec	%rsi
 	lea	op_div, %di
 	cmpsb
 	je	div_op
+
 	dec	%rsi
 	lea	op_unary_minus, %di
 	cmpsb
 	je	unary_minus
-	dec	%rsi
 _end_execute_operation:
 	call 	_clear_operation_symbol
 	jmp 	_continue_parse_argument
@@ -197,55 +200,46 @@ _end_execute_operation:
 add_op:
 	cmp	$2, %r10
 	jl 	_error
-#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	add 	%rbx, %rax
 	pushq	%rax
-#	push 	%rdx
 	dec 	%r10
 	jmp 	_end_execute_operation
 sub_op:
 	cmp	$2, %r10
 	jl 	_error
-#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	sub 	%rbx, %rax
 	pushq	%rax
-#	push 	%rdx
 	dec 	%r10
 	jmp 	_end_execute_operation
 mul_op:
 	cmp	$2, %r10
 	jl 	_error
-#	pop 	%rdx
 	popq	%rbx
 	popq 	%rax
 	mul 	%rbx
 	pushq	%rax
-	push 	%rdx
-#	dec 	%r10
+	dec 	%r10
 	jmp 	_end_execute_operation
 div_op:
 	cmp	$2, %r10
 	jl 	_error
-#	pop 	%rdx
+	xor 	%rdx, %rdx
 	popq	%rbx
 	popq 	%rax
 	div 	%rbx
 	pushq 	%rax
-#	push 	%rdx
 	dec 	%r10
 	jmp 	_end_execute_operation
 unary_minus:
 	cmp	$1, %r10
 	jl 	_error
-#	pop 	%rdx
 	popq 	%rax
 	neg 	%rax
 	pushq 	%rax
-#	push 	%rdx
 	jmp 	_end_execute_operation
 # ---------------------------------------------------
 _error:
