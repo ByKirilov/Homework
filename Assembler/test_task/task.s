@@ -32,8 +32,8 @@ _start:
 	jz 	_error
 
 	lea 	tmp_number, %r12 	# r12 - указатель на конец строки tmp_number
-	mov	$2, %rdx
-	mov	(%rsp, %rdx, 8), %r14	# r14 - текущий аргумент
+	mov	$2, %r13
+	mov	(%rsp, %r13, 8), %r14	# r14 - текущий аргумент
 	jmp 	_parse_argument
 
 _result:
@@ -50,16 +50,20 @@ _parse_argument:
 
 	call 	_grasp_operation_symbol
 	call 	_execute_operation
-
+	cmp 	$1, %r8
+	je 	_continue_parse_argument
 	call 	_grasp_numeral
-
+_continue_parse_argument:
+	xor 	%r8, %r8
 	inc 	%r14
 	jmp 	_parse_argument
 _end_argument:
 	call 	_push_num_to_stack
 	dec 	%r11
 	jz 	_result
-	mov 	$1, %rdx
+	add 	$1, %r13
+	mov 	%r13, %rdx
+	add 	%r10, %rdx
 	mov	(%rsp, %rdx, 8), %r14
 	jmp 	_parse_argument
 # ---------------------------------------------------
@@ -109,7 +113,9 @@ _push_num_to_stack:
 	cmp 	$0, (%rsi)
 	jz 	_end_push
 	call 	_parse_to_int
+	pop 	%rdx
 	pushq 	%rax
+	push 	%rdx
 	inc 	%r10
 	call	_clear_tmp_number
 _end_push:
@@ -163,6 +169,7 @@ _execute_operation:
 	je 	_end_execute_operation
 
 	call 	_push_num_to_stack
+	mov 	$1, %r8
 
 	mov 	$operation_symbol, %rsi
 	mov 	$1, %rcx
@@ -193,46 +200,56 @@ _end_execute_operation:
 add_op:
 	cmp	$2, %r10
 	jl 	_error
-	popq	%rax
-	popq 	%rbx
+	pop 	%rdx
+	popq	%rbx
+	popq 	%rax
 	add 	%rbx, %rax
 	pushq	%rax
+	push 	%rdx
 	dec 	%r10
-	call 	_end_execute_operation
+	jmp 	_end_execute_operation
 sub_op:
 	cmp	$2, %r10
 	jl 	_error
-	popq	%rax
-	popq 	%rbx
+	pop 	%rdx
+	popq	%rbx
+	popq 	%rax
 	sub 	%rbx, %rax
 	pushq	%rax
+	push 	%rdx
 	dec 	%r10
-	call 	_end_execute_operation
+	jmp 	_end_execute_operation
 mul_op:
 	cmp	$2, %r10
 	jl 	_error
-	popq	%rax
-	popq 	%rbx
+	pop 	%rdx
+	popq	%rbx
+	popq 	%rax
 	mul 	%rbx
 	pushq	%rax
+	push 	%rdx
 	dec 	%r10
-	call 	_end_execute_operation
+	jmp 	_end_execute_operation
 div_op:
 	cmp	$2, %r10
 	jl 	_error
-	popq	%rax
-	popq 	%rbx
+	pop 	%rdx
+	popq	%rbx
+	popq 	%rax
 	div 	%rbx
 	pushq 	%rax
+	push 	%rdx
 	dec 	%r10
-	call 	_end_execute_operation
+	jmp 	_end_execute_operation
 unary_minus:
 	cmp	$1, %r10
 	jl 	_error
+	pop 	%rdx
 	popq 	%rax
 	neg 	%rax
 	pushq 	%rax
-	call 	_end_execute_operation
+	push 	%rdx
+	jmp 	_end_execute_operation
 # ---------------------------------------------------
 _error:
 	mov	$WRITE, %rax
