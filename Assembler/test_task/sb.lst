@@ -11,130 +11,155 @@ GAS LISTING sb.s 			page 1
    6 000a 00000000 	tmp_number:		.skip N
    6      00000000 
    6      0000
-   7 0014 00       	operands_count: 	.byte 0x0
-   8 0015 23       	unary_minus:	.ascii "#"
-   9 0016 2D       	minus: 	.ascii "-"
-  10 0017 77       	other: 	.ascii "w"
-  11 0018 2D0A     	bad:	.ascii "-\n"
-  12 001a 23313233 	my_str:	.ascii "#123"
-  13 001e 21       	zero:	.ascii "!"
-  14 001f 0A       	n_l: 	.ascii "\n"
-  15 0020 30313233 	char_tab:	.ascii "0123456789"
-  15      34353637 
-  15      3839
-  16 002a 2B2D2A2F 	operation_char_tab:	.ascii "+-*/#"
-  16      23
-  17              	operations_count = 	. - operation_char_tab
-  18              	.text
-  19              	_start:
-  20 0000 48C7C202 		mov	$2, %rdx
-  20      000000
-  21 0007 4C8B04D4 		mov	(%rsp, %rdx, 8), %r8
-  22 000b EB09     		jmp 	_grasp_operation_symbol
-  23              	_exit:
-  24 000d 48C7C03C 	 	mov  $60, %rax
-  24      000000
-  25 0014 0F05     	 	syscall
-  26              	
-  27              	 _grasp_operation_symbol:
-  28 0016 48C7C305 	 	mov 	$operations_count, %rbx
-  28      000000
-  29 001d 48C7C101 		mov 	$1, %rcx
-  29      000000
-  30 0024 4C89C6   		mov	%r8, %rsi
-  31 0027 488D3C25 		lea	operation_char_tab, %rdi
-  31      00000000 
-  32              	 _grasp_operation_loop:
-  33 002f A6       		cmpsb
-  34 0030 74DB     		je	_exit
-  35 0032 48FFCE   		dec	%rsi
-  36 0035 48FFCB   		dec 	%rbx
-  37 0038 75F5     		jnz 	_grasp_operation_loop
-  38              	
-  39              	
-  40              	
-  41              	_numprint:
-  42 003a 4883F800 		cmp 	$0, %rax 	# Проверяем знак числа
-  43 003e 7D23     		jge 	_0b
-  44 0040 50       		pushq 	%rax 		# Если отрицательное, сохраняем rax
-  45 0041 48C7C001 		mov 	$WRITE, %rax
+   7 0014 00       	operation_symbol:	.skip 1
+   8 0015 00       	operands_count: 	.byte 0x0
+   9 0016 23       	unary_minus:	.ascii "#"
+  10 0017 2D       	minus: 	.ascii "-"
+  11 0018 77       	other: 	.ascii "w"
+  12 0019 2D0A     	bad:	.ascii "-\n"
+  13 001b 23313233 	my_str:	.ascii "#123"
+  14 001f 21       	zero:	.ascii "!"
+  15 0020 0A       	n_l: 	.ascii "\n"
+  16 0021 30313233 	char_tab:	.ascii "0123456789"
+  16      34353637 
+  16      3839
+  17 002b 2B2D2A2F 	operation_char_tab:	.ascii "+-*/#"
+  17      23
+  18              	operations_count = 	. - operation_char_tab
+  19              	.text
+  20              	_start:
+  21 0000 488D3425 		lea 	char_tab, %rsi
+  21      00000000 
+  22 0008 48FFC6   		inc 	%rsi
+  23 000b 48FFC6   		inc 	%rsi
+  24 000e 48FFC6   		inc 	%rsi
+  25 0011 48FFC6   		inc 	%rsi
+  26 0014 488D0425 		lea 	char_tab, %rax
+  26      00000000 
+  27 001c 4829F0   		sub 	%rsi, %rax
+  28 001f 48F7D8   		neg 	%rax
+  29 0022 90       		nop
+  30              	_exit:
+  31 0023 48C7C03C 	 	mov  $60, %rax
+  31      000000
+  32 002a 0F05     	 	syscall
+  33              	
+  34              	 _grasp_operation_symbol:
+  35 002c 48C7C305 	 	mov 	$operations_count, %rbx
+  35      000000
+  36 0033 48C7C101 		mov 	$1, %rcx
+  36      000000
+  37 003a 4C89C6   		mov	%r8, %rsi
+  38 003d 488D3C25 		lea	operation_char_tab, %rdi
+  38      00000000 
+  39              	 _grasp_operation_loop:
+  40 0045 A6       		cmpsb
+  41 0046 7409     		je	_end_grasp_operation
+  42 0048 48FFCE   		dec	%rsi
+  43 004b 48FFCB   		dec 	%rbx
+  44 004e 75F5     		jnz 	_grasp_operation_loop
 GAS LISTING sb.s 			page 2
 
 
-  45      000000
-  46 0048 48C7C701 		mov 	$1, %rdi
-  46      000000
-  47 004f 48C7C600 		mov 	$minus, %rsi
-  47      000000
-  48 0056 48C7C201 		mov 	$1, %rdx
-  48      000000
-  49 005d 0F05     		syscall			# Печатаем минус
-  50 005f 58       		popq 	%rax 		# Возвращаем rax на место
-  51 0060 48F7D8   		neg 	%rax 		# Переводим число в положительное
-  52              	_0b:
-  53 0063 4831C9   		xor	%rcx, %rcx
-  54 0066 48C7C30A 		movq	$10, %rbx
-  54      000000
-  55              	_1b:
-  56 006d 4831D2   		xorq	%rdx, %rdx
-  57 0070 48F7F3   		div	%rbx
-  58 0073 52       		pushq	%rdx
-  59 0074 48FFC1   		inc	%rcx
-  60 0077 4885C0   		testq	%rax, %rax
-  61 007a 75F1     		jnz	_1b
-  62              	_2b:
-  63 007c 58       		popq	%rax
-  64 007d 488D3425 		lea	char_tab, %rsi
-  64      00000000 
-  65 0085 4801C6   		add 	%rax, %rsi
-  66 0088 51       		push 	%rcx
-  67 0089 48C7C001 		mov 	$WRITE, %rax
-  67      000000
-  68 0090 48C7C701 		mov 	$1, %rdi
-  68      000000
-  69 0097 48C7C201 		mov 	$1, %rdx
-  69      000000
-  70 009e 0F05     		syscall
-  71 00a0 59       		pop 	%rcx
-  72 00a1 48FFC9   		dec	%rcx
-  73 00a4 75D6     		jnz	_2b
-  74 00a6 488D3425 		lea 	n_l, %rsi
-  74      00000000 
-  75 00ae 48C7C001 		mov 	$WRITE, %rax
-  75      000000
-  76 00b5 48C7C701 		mov 	$1, %rdi
-  76      000000
-  77 00bc 48C7C201 		mov 	$1, %rdx
-  77      000000
-  78 00c3 0F05     		syscall
-  79 00c5 E943FFFF 		jmp	_exit...
-  79      FF
+  45 0050 C3       		ret
+  46              	_end_grasp_operation:
+  47 0051 48FFCF   		dec 	%rdi
+  48 0054 4889FE   		mov 	%rdi, %rsi
+  49 0057 488D3C25 		lea 	operation_symbol, %rdi
+  49      00000000 
+  50 005f 48C7C101 		mov 	$1, %rcx
+  50      000000
+  51 0066 F3A4     		rep movsb
+  52 0068 C3       		ret
+  53              	_execute_operation:
+  54              	
+  55              	
+  56              	
+  57              	_numprint:
+  58 0069 4883F800 		cmp 	$0, %rax 	# Проверяем знак числа
+  59 006d 7D23     		jge 	_0b
+  60 006f 50       		pushq 	%rax 		# Если отрицательное, сохраняем rax
+  61 0070 48C7C001 		mov 	$WRITE, %rax
+  61      000000
+  62 0077 48C7C701 		mov 	$1, %rdi
+  62      000000
+  63 007e 48C7C600 		mov 	$minus, %rsi
+  63      000000
+  64 0085 48C7C201 		mov 	$1, %rdx
+  64      000000
+  65 008c 0F05     		syscall			# Печатаем минус
+  66 008e 58       		popq 	%rax 		# Возвращаем rax на место
+  67 008f 48F7D8   		neg 	%rax 		# Переводим число в положительное
+  68              	_0b:
+  69 0092 4831C9   		xor	%rcx, %rcx
+  70 0095 48C7C30A 		movq	$10, %rbx
+  70      000000
+  71              	_1b:
+  72 009c 4831D2   		xorq	%rdx, %rdx
+  73 009f 48F7F3   		div	%rbx
+  74 00a2 52       		pushq	%rdx
+  75 00a3 48FFC1   		inc	%rcx
+  76 00a6 4885C0   		testq	%rax, %rax
+  77 00a9 75F1     		jnz	_1b
+  78              	_2b:
+  79 00ab 58       		popq	%rax
+  80 00ac 488D3425 		lea	char_tab, %rsi
+  80      00000000 
+  81 00b4 4801C6   		add 	%rax, %rsi
+  82 00b7 51       		push 	%rcx
+  83 00b8 48C7C001 		mov 	$WRITE, %rax
+  83      000000
+  84 00bf 48C7C701 		mov 	$1, %rdi
+  84      000000
+  85 00c6 48C7C201 		mov 	$1, %rdx
+  85      000000
+  86 00cd 0F05     		syscall
+  87 00cf 59       		pop 	%rcx
+  88 00d0 48FFC9   		dec	%rcx
+  89 00d3 75D6     		jnz	_2b
+  90 00d5 488D3425 		lea 	n_l, %rsi
 GAS LISTING sb.s 			page 3
 
 
+  90      00000000 
+  91 00dd 48C7C001 		mov 	$WRITE, %rax
+  91      000000
+  92 00e4 48C7C701 		mov 	$1, %rdi
+  92      000000
+  93 00eb 48C7C201 		mov 	$1, %rdx
+  93      000000
+  94 00f2 0F05     		syscall
+  95 00f4 E92AFFFF 		jmp	_exit...
+  95      FF
+GAS LISTING sb.s 			page 4
+
+
 DEFINED SYMBOLS
-                sb.s:19     .text:0000000000000000 _start
+                sb.s:20     .text:0000000000000000 _start
                 sb.s:3      *ABS*:000000000000000a N
                 sb.s:4      *ABS*:0000000000000001 WRITE
                 sb.s:5      .data:0000000000000000 empty
                 sb.s:6      .data:000000000000000a tmp_number
-                sb.s:7      .data:0000000000000014 operands_count
-                sb.s:8      .data:0000000000000015 unary_minus
-                sb.s:9      .data:0000000000000016 minus
-                sb.s:10     .data:0000000000000017 other
-                sb.s:11     .data:0000000000000018 bad
-                sb.s:12     .data:000000000000001a my_str
-                sb.s:13     .data:000000000000001e zero
-                sb.s:14     .data:000000000000001f n_l
-                sb.s:15     .data:0000000000000020 char_tab
-                sb.s:16     .data:000000000000002a operation_char_tab
-                sb.s:17     *ABS*:0000000000000005 operations_count
-                sb.s:27     .text:0000000000000016 _grasp_operation_symbol
-                sb.s:23     .text:000000000000000d _exit
-                sb.s:32     .text:000000000000002f _grasp_operation_loop
-                sb.s:41     .text:000000000000003a _numprint
-                sb.s:52     .text:0000000000000063 _0b
-                sb.s:55     .text:000000000000006d _1b
-                sb.s:62     .text:000000000000007c _2b
+                sb.s:7      .data:0000000000000014 operation_symbol
+                sb.s:8      .data:0000000000000015 operands_count
+                sb.s:9      .data:0000000000000016 unary_minus
+                sb.s:10     .data:0000000000000017 minus
+                sb.s:11     .data:0000000000000018 other
+                sb.s:12     .data:0000000000000019 bad
+                sb.s:13     .data:000000000000001b my_str
+                sb.s:14     .data:000000000000001f zero
+                sb.s:15     .data:0000000000000020 n_l
+                sb.s:16     .data:0000000000000021 char_tab
+                sb.s:17     .data:000000000000002b operation_char_tab
+                sb.s:18     *ABS*:0000000000000005 operations_count
+                sb.s:30     .text:0000000000000023 _exit
+                sb.s:34     .text:000000000000002c _grasp_operation_symbol
+                sb.s:39     .text:0000000000000045 _grasp_operation_loop
+                sb.s:46     .text:0000000000000051 _end_grasp_operation
+                sb.s:53     .text:0000000000000069 _execute_operation
+                sb.s:57     .text:0000000000000069 _numprint
+                sb.s:68     .text:0000000000000092 _0b
+                sb.s:71     .text:000000000000009c _1b
+                sb.s:78     .text:00000000000000ab _2b
 
 NO UNDEFINED SYMBOLS

@@ -18,9 +18,15 @@ operation_char_tab:	.ascii "+-*/#"
 operations_count = 	. - operation_char_tab
 .text
 _start:
-	mov	$2, %rdx
-	mov	(%rsp, %rdx, 8), %r8
-	jmp 	_grasp_operation_symbol
+	lea 	char_tab, %rsi
+	inc 	%rsi
+	inc 	%rsi
+	inc 	%rsi
+	inc 	%rsi
+	lea 	char_tab, %rax
+	sub 	%rsi, %rax
+	neg 	%rax
+	nop
 _exit:
  	mov  $60, %rax
  	syscall

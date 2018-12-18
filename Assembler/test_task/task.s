@@ -10,15 +10,20 @@ current_numeral:	.skip 1
 big_empty: 		.skip N
 small_empty: 		.skip 1
 current_number:		.quad 0
-numeral_char_tab:	.ascii "0123456789"
+numeral_char_tab:	.ascii "0123456789ABCDEF"
 numerals_count = 	. - numeral_char_tab
-operation_char_tab:	.ascii "+-*/#"
+operation_char_tab:	.ascii "+-*/@&|#^"
 operations_count = 	. - operation_char_tab
 op_add:	.ascii "+"
 op_sub:	.ascii "-"
 op_mov:	.ascii "*"
 op_div:	.ascii "/"
-op_unary_minus: .ascii "#"
+op_unary_minus: .ascii "@"
+op_and:	.ascii "&"
+op_or:	.ascii "|"
+op_xor:	.ascii "#"
+op_exp: .ascii "^"
+hex_prefix:	.ascii "0x"
 line_break:	.ascii "\n"
 err_messg:	.ascii "Something wrong\n"
 lerr_messg = . - err_messg
@@ -97,6 +102,17 @@ _grasp_numeral_loop:
 	dec	%rsi
 	dec 	%r15
 	jnz 	_grasp_numeral_loop
+
+	lea 	tmp_number, %rax
+	sub 	%r12, %rax
+	neg 	%rax
+	cmp 	$1, %rax
+	jne 	_error
+	lea 	hex_prefix, %rdi
+	inc 	%rdi
+	cmpsb
+	je 	_end_grasp_numeral
+
 	jmp 	_error
 _end_grasp_numeral:
 	dec 	%rdi
@@ -144,7 +160,18 @@ _parse_to_int:
 	jmp	_ii1
 _ii1:
 	xor 	%rax, %rax
+	mov 	$2, %rcx
+	lea 	hex_prefix, %rdi
+	cmpsb
+	je 	_set_16
+	dec 	%rsi
+_set_10:
 	mov 	$10, %rbx
+	jmp 	_ii2
+_set_16:
+	inc 	%rsi
+	mov 	$16, %rbx
+	jmp 	_ii3
 _ii2:
 	mov 	(%rsi), %cl
 	cmp 	$0, %cl
@@ -155,6 +182,21 @@ _ii2:
 	add 	%rcx, %rax
 	inc 	%rsi
 	jmp 	_ii2
+_ii3:
+	mov 	(%rsi), %cl
+	cmp 	$0, %cl
+	jz 	_end_number
+
+	cmp 	$58, %cl
+	jl	_c_ii3
+	sub 	$'A', %cl
+	add 	$10, %cl
+_c_ii3:
+	sub 	$'0', %cl
+	mul 	%rbx
+	add 	%rcx, %rax
+	inc 	%rsi
+	jmp 	_ii3
 _end_number:
 	lea 	tmp_number, %r12
 	ret
@@ -193,6 +235,26 @@ _execute_operation:
 	lea	op_unary_minus, %di
 	cmpsb
 	je	unary_minus
+
+	dec	%rsi
+	lea	op_and, %di
+	cmpsb
+	je	and_op
+
+	dec	%rsi
+	lea	op_or, %di
+	cmpsb
+	je	or_op
+
+	dec	%rsi
+	lea	op_xor, %di
+	cmpsb
+	je	xor_op
+
+	dec	%rsi
+	lea	op_exp, %di
+	cmpsb
+	je	exp_op
 _end_execute_operation:
 	call 	_clear_operation_symbol
 	jmp 	_continue_parse_argument
@@ -250,6 +312,52 @@ unary_minus:
 	popq 	%rax
 	neg 	%rax
 	pushq 	%rax
+	jmp 	_end_execute_operation
+xor_op:
+	cmp	$2, %r10
+	jl 	_error
+	popq	%rbx
+	popq 	%rax
+	xor 	%rbx, %rax
+	pushq	%rax
+	dec 	%r10
+	jmp 	_end_execute_operation
+and_op:
+	cmp	$2, %r10
+	jl 	_error
+	popq	%rbx
+	popq 	%rax
+	and 	%rbx, %rax
+	pushq	%rax
+	dec 	%r10
+	jmp 	_end_execute_operation
+or_op:
+	cmp	$2, %r10
+	jl 	_error
+	popq	%rbx
+	popq 	%rax
+	or 	%rbx, %rax
+	pushq	%rax
+	dec 	%r10
+	jmp 	_end_execute_operation
+exp_op:
+	cmp	$2, %r10
+	jl 	_error
+	popq	%rbx
+	popq 	%rcx
+	mov 	$1, %rax
+	cmp 	$0, %rbx
+	jg	_exp_loop
+	je 	_exp_save
+	mov 	$0, %rax
+	jmp 	_exp_save
+_exp_loop:
+	mul 	%rcx
+	dec 	%rbx
+	jnz 	_exp_loop
+_exp_save:
+	pushq	%rax
+	dec 	%r10
 	jmp 	_end_execute_operation
 # ---------------------------------------------------
 _error:

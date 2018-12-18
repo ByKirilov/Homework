@@ -1,2 +1,2 @@
-break _grasp_operation_symbol
+break _start
 
