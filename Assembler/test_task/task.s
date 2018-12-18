@@ -187,12 +187,11 @@ _ii3:
 	cmp 	$0, %cl
 	jz 	_end_number
 
-	cmp 	$58, %cl
-	jl	_c_ii3
-	sub 	$'A', %cl
-	add 	$10, %cl
-_c_ii3:
 	sub 	$'0', %cl
+	cmp 	$10, %cl
+	jl 	_c_ii3
+	sub 	$7, %cl
+_c_ii3:
 	mul 	%rbx
 	add 	%rcx, %rax
 	inc 	%rsi
