@@ -3,26 +3,23 @@
 .set 	N, 100
 .set	WRITE, 1
 .set	EXIT, 60
-operands_count:		.word 0
 operation_symbol:	.skip 1
 tmp_number:		.skip N
 current_numeral:	.skip 1
 big_empty: 		.skip N
 small_empty: 		.skip 1
-current_number:		.quad 0
 numeral_char_tab:	.ascii "0123456789ABCDEF"
 numerals_count = 	. - numeral_char_tab
-operation_char_tab:	.ascii "+-*/@&|#^"
-operations_count = 	. - operation_char_tab
 op_add:	.ascii "+"
 op_sub:	.ascii "-"
 op_mov:	.ascii "*"
 op_div:	.ascii "/"
-op_unary_minus: .ascii "@"
+op_unary_minus: .ascii "~"
 op_and:	.ascii "&"
 op_or:	.ascii "|"
 op_xor:	.ascii "#"
 op_exp: .ascii "^"
+operations_count = . - op_add
 hex_prefix:	.ascii "0x"
 line_break:	.ascii "\n"
 err_messg:	.ascii "Something wrong\n"
@@ -75,7 +72,7 @@ _end_argument:
  	mov 	$operations_count, %r15
 	mov 	$1, %rcx
 	mov	%r14, %rsi
-	lea	operation_char_tab, %rdi
+	lea	op_add, %rdi
  _grasp_operation_loop:
 	cmpsb
 	je	_end_grasp_operation
@@ -146,56 +143,37 @@ _clear_operation_symbol:
 	lea 	operation_symbol, %rdi
 	mov 	$1, %rcx
 	jmp 	_clear_string
-_clear_current_numeral:
-	lea	small_empty, %rsi
-	lea 	current_numeral, %rdi
-	mov 	$1, %rcx
-	jmp 	_clear_string
 _clear_string:
 	rep movsb
 	ret
 # ---------------------------------------------------
 _parse_to_int:
 	lea 	tmp_number, %rsi
-	jmp	_ii1
-_ii1:
 	xor 	%rax, %rax
 	mov 	$2, %rcx
 	lea 	hex_prefix, %rdi
 	cmpsb
 	je 	_set_16
 	dec 	%rsi
-_set_10:
 	mov 	$10, %rbx
-	jmp 	_ii2
+	jmp 	_parse_to_int_loop
 _set_16:
 	inc 	%rsi
 	mov 	$16, %rbx
-	jmp 	_ii3
-_ii2:
-	mov 	(%rsi), %cl
-	cmp 	$0, %cl
-	jz 	_end_number
-
-	sub 	$'0', %cl
-	mul 	%rbx
-	add 	%rcx, %rax
-	inc 	%rsi
-	jmp 	_ii2
-_ii3:
+_parse_to_int_loop:
 	mov 	(%rsi), %cl
 	cmp 	$0, %cl
 	jz 	_end_number
 
 	sub 	$'0', %cl
 	cmp 	$10, %cl
-	jl 	_c_ii3
+	jl 	_add_numeral
 	sub 	$7, %cl
-_c_ii3:
+_add_numeral:
 	mul 	%rbx
 	add 	%rcx, %rax
 	inc 	%rsi
-	jmp 	_ii3
+	jmp 	_parse_to_int_loop
 _end_number:
 	lea 	tmp_number, %r12
 	ret
