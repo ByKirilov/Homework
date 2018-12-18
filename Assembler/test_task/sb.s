@@ -4,6 +4,7 @@
 .set	WRITE, 1
 empty:	.skip N
 tmp_number:		.skip N
+operation_symbol:	.skip 1
 operands_count: 	.byte 0x0
 unary_minus:	.ascii "#"
 minus: 	.ascii "-"
@@ -13,48 +14,39 @@ my_str:	.ascii "#123"
 zero:	.ascii "!"
 n_l: 	.ascii "\n"
 char_tab:	.ascii "0123456789"
+operation_char_tab:	.ascii "+-*/#"
+operations_count = 	. - operation_char_tab
 .text
 _start:
-	lea 	my_str, %rsi
- 	lea 	tmp_number, %rdi
- 	mov 	$4, %rcx
- 	rep movsb
- 	call  	_parse_to_int
- 	jmp 	_numprint
- 	jmp  	_exit
-
-_parse_to_int:
- 	lea  	tmp_number, %rsi # Берём адрес начала строки с числом
- 	lea  	unary_minus, %rdi # Адрес символа, отвечающего за унарный минус
- 	cmpsb    # Проверяем, не является ли первый символ унарным минусом
- 	jnz 	_ii1
- 	mov  	$1, %di   # Если является, ставим флаг
- 	inc 	%rsi   # И пропускаем этот минус
-_ii1:
- 	dec  	%rsi
- 	xorq  	%rax, %rax
- 	mov  	$10, %rbx  # Основание СС
-_ii2:
- 	mov  	(%rsi), %cl   # Берём символ из буфера
- 	cmp  	$0, %cl   # проверяем, не конец ли это строки
- 	jz  	_end_number   
-
- 	sub  	$'0', %cl   # Превращаем символ в число
- 	mul  	%rbx    # Умножаем то, что уже есть на основание СС
- 	add  	%rcx, %rax   # Добавляем к тому, что уже есть, то что получили на этом шаге
- 	inc  	%rsi   # Указатель на следующий символ
- 	jmp  	_ii2    # Повторяем
-_end_number:
- 	cmp  	$1, %di   # Все символы из строки обработаны. Если установлен флаг, то
- 	jnz  	_ii3
- 	neg  	%rax   # делаем число отрицательным
-_ii3:
- 	ret
-# По итогу число лешит в RAX
-
+	mov	$2, %rdx
+	mov	(%rsp, %rdx, 8), %r8
+	jmp 	_grasp_operation_symbol
 _exit:
  	mov  $60, %rax
  	syscall
+
+ _grasp_operation_symbol:
+ 	mov 	$operations_count, %rbx
+	mov 	$1, %rcx
+	mov	%r8, %rsi
+	lea	operation_char_tab, %rdi
+ _grasp_operation_loop:
+	cmpsb
+	je	_end_grasp_operation
+	dec	%rsi
+	dec 	%rbx
+	jnz 	_grasp_operation_loop
+	ret
+_end_grasp_operation:
+	dec 	%rdi
+	mov 	%rdi, %rsi
+	lea 	operation_symbol, %rdi
+	mov 	$1, %rcx
+	rep movsb
+	ret
+_execute_operation:
+
+
 
 _numprint:
 	cmp 	$0, %rax 	# Проверяем знак числа

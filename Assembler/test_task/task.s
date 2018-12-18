@@ -227,10 +227,20 @@ mul_op:
 div_op:
 	cmp	$2, %r10
 	jl 	_error
-	xor 	%rdx, %rdx
+	xor 	%rcx, %rcx
 	popq	%rbx
 	popq 	%rax
-	div 	%rbx
+	cmp 	$0, %rax
+	jge 	_do_div
+	mov 	$1, %rcx
+	neg 	%rax
+_do_div:
+	xor 	%rdx, %rdx
+	idiv 	%rbx
+	test 	%rcx, %rcx
+	jz 	_complete_div
+	neg 	%rax
+_complete_div:
 	pushq 	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
