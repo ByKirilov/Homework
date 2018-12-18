@@ -24,6 +24,29 @@ hex_prefix:	.ascii "0x"
 line_break:	.ascii "\n"
 err_messg:	.ascii "Something wrong\n"
 lerr_messg = . - err_messg
+no_args_exception:	.ascii "No argumets\n"
+lno_args_exception = . - no_args_exception
+many_operands_exception:	.ascii "Many operands\n"
+lmany_operands_exception = . - many_operands_exception
+few_operands_exception:	.ascii "Few operands\n"
+lfew_operands_exception = . - few_operands_exception
+bad_symbol_exceprion:	.ascii "Bad symbol"
+lbad_symbol_exceprion = . - bad_symbol_exceprion
+
+.macro	my_exit	exit_code=0
+	mov	$60, %eax
+	mov	$\exit_code, %edi
+	syscall
+.endm
+
+.macro	raise	except_msg=err_messg lexcept_msg=lerr_messg
+	mov 	$WRITE, %rax
+	mov 	$1, %rdi
+	mov 	$\except_msg, %rsi
+	mov 	$\lexcept_msg, %rdx
+	syscall
+	my_exit	1
+.endm
 
 .text
 _start:
@@ -31,8 +54,9 @@ _start:
 	mov 	(%rsp), %r11
 	dec 	%r11 			# r11 показывает сколько аргументов нам передали
 	cmp 	$0, %r11
-	jz 	_error
-
+	jnz 	_continue
+	raise	no_args_exception, lno_args_exception
+_continue:
 	lea 	tmp_number, %r12 	# r12 - указатель на конец строки tmp_number
 	mov	$2, %r13
 	mov	(%rsp, %r13, 8), %r14	# r14 - текущий аргумент
@@ -40,7 +64,9 @@ _start:
 
 _result:
 	cmp 	$1, %r10
-	jg 	_error
+	jle 	_continue_result
+	raise	many_operands_exception, lmany_operands_exception
+_continue_result:
 	popq 	%rax
 	jmp 	_numprint
 # ---------------------------------------------------
@@ -104,13 +130,15 @@ _grasp_numeral_loop:
 	sub 	%r12, %rax
 	neg 	%rax
 	cmp 	$1, %rax
-	jne 	_error
+	je 	_continue_grasp_numeral
+	raise	bad_symbol_exceprion, lbad_symbol_exceprion
+_continue_grasp_numeral:
 	lea 	hex_prefix, %rdi
 	inc 	%rdi
 	cmpsb
 	je 	_end_grasp_numeral
 
-	jmp 	_error
+	raise	bad_symbol_exceprion, lbad_symbol_exceprion
 _end_grasp_numeral:
 	dec 	%rdi
 	mov 	%rdi, %rsi
@@ -238,34 +266,45 @@ _end_execute_operation:
 # ---------------------------------------------------
 add_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_add
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_add:
 	popq	%rbx
 	popq 	%rax
 	add 	%rbx, %rax
 	pushq	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 sub_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_sub
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_sub:
 	popq	%rbx
 	popq 	%rax
 	sub 	%rbx, %rax
 	pushq	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 mul_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_mul
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_mul:
 	popq	%rbx
 	popq 	%rax
 	mul 	%rbx
 	pushq	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 div_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_div
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_div:
 	xor 	%rcx, %rcx
 	popq	%rbx
 	popq 	%rax
@@ -273,6 +312,7 @@ div_op:
 	jge 	_do_div
 	mov 	$1, %rcx
 	neg 	%rax
+
 _do_div:
 	xor 	%rdx, %rdx
 	idiv 	%rbx
@@ -283,43 +323,58 @@ _complete_div:
 	pushq 	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 unary_minus:
 	cmp	$1, %r10
-	jl 	_error
+	jge 	_continue_unary_minus
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_unary_minus:
 	popq 	%rax
 	neg 	%rax
 	pushq 	%rax
 	jmp 	_end_execute_operation
+
 xor_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_xor
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_xor:
 	popq	%rbx
 	popq 	%rax
 	xor 	%rbx, %rax
 	pushq	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 and_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_and
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_and:
 	popq	%rbx
 	popq 	%rax
 	and 	%rbx, %rax
 	pushq	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 or_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_or
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_or:
 	popq	%rbx
 	popq 	%rax
 	or 	%rbx, %rax
 	pushq	%rax
 	dec 	%r10
 	jmp 	_end_execute_operation
+
 exp_op:
 	cmp	$2, %r10
-	jl 	_error
+	jge 	_continue_xor
+	raise 	few_operands_exception, lfew_operands_exception
+_continue_exp:
 	popq	%rbx
 	popq 	%rcx
 	mov 	$1, %rax
@@ -388,4 +443,4 @@ _2b:
 	mov 	$1, %rdi
 	mov 	$1, %rdx
 	syscall
-	jmp	_exit
+	my_exit
