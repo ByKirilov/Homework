@@ -30,8 +30,10 @@ many_operands_exception:	.ascii "Many operands\n"
 lmany_operands_exception = . - many_operands_exception
 few_operands_exception:	.ascii "Few operands\n"
 lfew_operands_exception = . - few_operands_exception
-bad_symbol_exceprion:	.ascii "Bad symbol"
+bad_symbol_exceprion:	.ascii "Bad symbol\n"
 lbad_symbol_exceprion = . - bad_symbol_exceprion
+division_by_zero_exception:	.ascii "Division by zero\n"
+ldivision_by_zero_exception = . - division_by_zero_exception
 
 .macro	my_exit	exit_code=0
 	mov	$60, %eax
@@ -308,6 +310,10 @@ _continue_div:
 	xor 	%rcx, %rcx
 	popq	%rbx
 	popq 	%rax
+	test 	%rbx, %rbx
+	jnz 	_continue_div2
+	raise 	division_by_zero_exception, ldivision_by_zero_exception
+_continue_div2:
 	cmp 	$0, %rax
 	jge 	_do_div
 	mov 	$1, %rcx
@@ -372,7 +378,7 @@ _continue_or:
 
 exp_op:
 	cmp	$2, %r10
-	jge 	_continue_xor
+	jge 	_continue_exp
 	raise 	few_operands_exception, lfew_operands_exception
 _continue_exp:
 	popq	%rbx

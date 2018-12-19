@@ -55,754 +55,778 @@ GAS LISTING task.s 			page 1
   31      616E6473 
   31      0A
   32              	lfew_operands_exception = . - few_operands_exception
-  33 011e 42616420 	bad_symbol_exceprion:	.ascii "Bad symbol"
+  33 011e 42616420 	bad_symbol_exceprion:	.ascii "Bad symbol\n"
   33      73796D62 
-  33      6F6C
+  33      6F6C0A
 GAS LISTING task.s 			page 2
 
 
   34              	lbad_symbol_exceprion = . - bad_symbol_exceprion
-  35              	
-  36              	.macro	my_exit	exit_code=0
-  37              		mov	$60, %eax
-  38              		mov	$\exit_code, %edi
-  39              		syscall
-  40              	.endm
-  41              	
-  42              	.macro	raise	except_msg=err_messg lexcept_msg=lerr_messg
-  43              		mov 	$WRITE, %rax
-  44              		mov 	$1, %rdi
-  45              		mov 	$\except_msg, %rsi
-  46              		mov 	$\lexcept_msg, %rdx
-  47              		syscall
-  48              		my_exit	1
-  49              	.endm
-  50              	
-  51              	.text
-  52              	_start:
-  53 0000 4D31D2   		xorq 	%r10, %r10		# r10 играет роль счётчика количества операнд
-  54 0003 4C8B1C24 		mov 	(%rsp), %r11
-  55 0007 49FFCB   		dec 	%r11 			# r11 показывает сколько аргументов нам передал�
-  56 000a 4983FB00 		cmp 	$0, %r11
-  57 000e 752A     		jnz 	_continue
-  58              		raise	no_args_exception, lno_args_exception
-  58 0010 48C7C001 	>  mov $WRITE,%rax
-  58      000000
-  58 0017 48C7C701 	>  mov $1,%rdi
-  58      000000
-  58 001e 48C7C600 	>  mov $no_args_exception,%rsi
-  58      000000
-  58 0025 48C7C20C 	>  mov $lno_args_exception,%rdx
-  58      000000
-  58 002c 0F05     	>  syscall
-  58              	>  my_exit 1
-  58 002e B83C0000 	>>  mov $60,%eax
-  58      00
-  58 0033 BF010000 	>>  mov $1,%edi
-  58      00
-  58 0038 0F05     	>>  syscall
-  59              	_continue:
-  60 003a 4C8D2425 		lea 	tmp_number, %r12 	# r12 - указатель на конец строки tmp_number
-  60      00000000 
-  61 0042 49C7C502 		mov	$2, %r13
-  61      000000
-  62 0049 4E8B34EC 		mov	(%rsp, %r13, 8), %r14	# r14 - текущий аргумент
-  63 004d EB36     		jmp 	_parse_argument
-  64              	
-  65              	_result:
-  66 004f 4983FA01 		cmp 	$1, %r10
-  67 0053 7E2A     		jle 	_continue_result
-  68              		raise	many_operands_exception, lmany_operands_exception
-  68 0055 48C7C001 	>  mov $WRITE,%rax
-  68      000000
-  68 005c 48C7C701 	>  mov $1,%rdi
-  68      000000
-  68 0063 48C7C600 	>  mov $many_operands_exception,%rsi
+  35 0129 44697669 	division_by_zero_exception:	.ascii "Division by zero\n"
+  35      73696F6E 
+  35      20627920 
+  35      7A65726F 
+  35      0A
+  36              	ldivision_by_zero_exception = . - division_by_zero_exception
+  37              	
+  38              	.macro	my_exit	exit_code=0
+  39              		mov	$60, %eax
+  40              		mov	$\exit_code, %edi
+  41              		syscall
+  42              	.endm
+  43              	
+  44              	.macro	raise	except_msg=err_messg lexcept_msg=lerr_messg
+  45              		mov 	$WRITE, %rax
+  46              		mov 	$1, %rdi
+  47              		mov 	$\except_msg, %rsi
+  48              		mov 	$\lexcept_msg, %rdx
+  49              		syscall
+  50              		my_exit	1
+  51              	.endm
+  52              	
+  53              	.text
+  54              	_start:
+  55 0000 4D31D2   		xorq 	%r10, %r10		# r10 играет роль счётчика количества операнд
+  56 0003 4C8B1C24 		mov 	(%rsp), %r11
+  57 0007 49FFCB   		dec 	%r11 			# r11 показывает сколько аргументов нам передал�
+  58 000a 4983FB00 		cmp 	$0, %r11
+  59 000e 752A     		jnz 	_continue
+  60              		raise	no_args_exception, lno_args_exception
+  60 0010 48C7C001 	>  mov $WRITE,%rax
+  60      000000
+  60 0017 48C7C701 	>  mov $1,%rdi
+  60      000000
+  60 001e 48C7C600 	>  mov $no_args_exception,%rsi
+  60      000000
+  60 0025 48C7C20C 	>  mov $lno_args_exception,%rdx
+  60      000000
+  60 002c 0F05     	>  syscall
+  60              	>  my_exit 1
+  60 002e B83C0000 	>>  mov $60,%eax
+  60      00
+  60 0033 BF010000 	>>  mov $1,%edi
+  60      00
+  60 0038 0F05     	>>  syscall
+  61              	_continue:
+  62 003a 4C8D2425 		lea 	tmp_number, %r12 	# r12 - указатель на конец строки tmp_number
+  62      00000000 
+  63 0042 49C7C502 		mov	$2, %r13
+  63      000000
+  64 0049 4E8B34EC 		mov	(%rsp, %r13, 8), %r14	# r14 - текущий аргумент
+  65 004d EB36     		jmp 	_parse_argument
+  66              	
+  67              	_result:
+  68 004f 4983FA01 		cmp 	$1, %r10
+  69 0053 7E2A     		jle 	_continue_result
 GAS LISTING task.s 			page 3
 
 
-  68      000000
-  68 006a 48C7C20E 	>  mov $lmany_operands_exception,%rdx
-  68      000000
-  68 0071 0F05     	>  syscall
-  68              	>  my_exit 1
-  68 0073 B83C0000 	>>  mov $60,%eax
-  68      00
-  68 0078 BF010000 	>>  mov $1,%edi
-  68      00
-  68 007d 0F05     	>>  syscall
-  69              	_continue_result:
-  70 007f 58       		popq 	%rax
-  71 0080 E9390500 		jmp 	_numprint
-  71      00
-  72              	# ---------------------------------------------------
-  73              	_parse_argument:
-  74 0085 4831DB   		xor 	%rbx, %rbx
-  75 0088 418A1E   		mov 	(%r14), %bl
-  76 008b 80FB00   		cmp 	$0, %bl
-  77 008e 7417     		jz 	_end_argument
-  78              	
-  79 0090 E82C0000 		call 	_grasp_operation_symbol
-  79      00
-  80 0095 E9C00100 		jmp 	_execute_operation
-  80      00
-  81              	_continue_grasp:
-  82 009a E85F0000 		call 	_grasp_numeral
+  70              		raise	many_operands_exception, lmany_operands_exception
+  70 0055 48C7C001 	>  mov $WRITE,%rax
+  70      000000
+  70 005c 48C7C701 	>  mov $1,%rdi
+  70      000000
+  70 0063 48C7C600 	>  mov $many_operands_exception,%rsi
+  70      000000
+  70 006a 48C7C20E 	>  mov $lmany_operands_exception,%rdx
+  70      000000
+  70 0071 0F05     	>  syscall
+  70              	>  my_exit 1
+  70 0073 B83C0000 	>>  mov $60,%eax
+  70      00
+  70 0078 BF010000 	>>  mov $1,%edi
+  70      00
+  70 007d 0F05     	>>  syscall
+  71              	_continue_result:
+  72 007f 58       		popq 	%rax
+  73 0080 E9640500 		jmp 	_numprint
+  73      00
+  74              	# ---------------------------------------------------
+  75              	_parse_argument:
+  76 0085 4831DB   		xor 	%rbx, %rbx
+  77 0088 418A1E   		mov 	(%r14), %bl
+  78 008b 80FB00   		cmp 	$0, %bl
+  79 008e 7417     		jz 	_end_argument
+  80              	
+  81 0090 E82C0000 		call 	_grasp_operation_symbol
+  81      00
+  82 0095 E9C00100 		jmp 	_execute_operation
   82      00
-  83              	_continue_parse_argument:
-  84 009f 4D31C0   		xor 	%r8, %r8
-  85 00a2 49FFC6   		inc 	%r14
-  86 00a5 EBDE     		jmp 	_parse_argument
-  87              	_end_argument:
-  88 00a7 E8020100 		call 	_push_num_to_stack
-  88      00
-  89 00ac 49FFCB   		dec 	%r11
-  90 00af 749E     		jz 	_result
-  91 00b1 4983C501 		add 	$1, %r13
-  92 00b5 4C89EA   		mov 	%r13, %rdx
-  93 00b8 4C01D2   		add 	%r10, %rdx
-  94 00bb 4C8B34D4 		mov	(%rsp, %rdx, 8), %r14
-  95 00bf EBC4     		jmp 	_parse_argument
-  96              	# ---------------------------------------------------
-  97              	 _grasp_operation_symbol:
-  98 00c1 49C7C709 	 	mov 	$operations_count, %r15
-  98      000000
-  99 00c8 48C7C101 		mov 	$1, %rcx
-  99      000000
- 100 00cf 4C89F6   		mov	%r14, %rsi
- 101 00d2 488D3C25 		lea	op_add, %rdi
- 101      00000000 
- 102              	 _grasp_operation_loop:
- 103 00da A6       		cmpsb
- 104 00db 7409     		je	_end_grasp_operation
- 105 00dd 48FFCE   		dec	%rsi
- 106 00e0 49FFCF   		dec 	%r15
- 107 00e3 75F5     		jnz 	_grasp_operation_loop
+  83              	_continue_grasp:
+  84 009a E85F0000 		call 	_grasp_numeral
+  84      00
+  85              	_continue_parse_argument:
+  86 009f 4D31C0   		xor 	%r8, %r8
+  87 00a2 49FFC6   		inc 	%r14
+  88 00a5 EBDE     		jmp 	_parse_argument
+  89              	_end_argument:
+  90 00a7 E8020100 		call 	_push_num_to_stack
+  90      00
+  91 00ac 49FFCB   		dec 	%r11
+  92 00af 749E     		jz 	_result
+  93 00b1 4983C501 		add 	$1, %r13
+  94 00b5 4C89EA   		mov 	%r13, %rdx
+  95 00b8 4C01D2   		add 	%r10, %rdx
+  96 00bb 4C8B34D4 		mov	(%rsp, %rdx, 8), %r14
+  97 00bf EBC4     		jmp 	_parse_argument
+  98              	# ---------------------------------------------------
+  99              	 _grasp_operation_symbol:
+ 100 00c1 49C7C709 	 	mov 	$operations_count, %r15
+ 100      000000
+ 101 00c8 48C7C101 		mov 	$1, %rcx
+ 101      000000
+ 102 00cf 4C89F6   		mov	%r14, %rsi
+ 103 00d2 488D3C25 		lea	op_add, %rdi
+ 103      00000000 
 GAS LISTING task.s 			page 4
 
 
- 108 00e5 C3       		ret
- 109              	_end_grasp_operation:
- 110 00e6 48FFCF   		dec 	%rdi
- 111 00e9 4889FE   		mov 	%rdi, %rsi
- 112 00ec 488D3C25 		lea 	operation_symbol, %rdi
- 112      00000000 
- 113 00f4 48C7C101 		mov 	$1, %rcx
- 113      000000
- 114 00fb F3A4     		rep movsb
- 115 00fd C3       		ret
- 116              	# ---------------------------------------------------
- 117              	_grasp_numeral:
- 118 00fe 49C7C710 		mov 	$numerals_count, %r15
- 118      000000
- 119 0105 48C7C101 		mov 	$1, %rcx
- 119      000000
- 120 010c 4C89F6   		mov 	%r14, %rsi
- 121 010f 488D3C25 		lea 	numeral_char_tab, %rdi
- 121      00000000 
- 122              	_grasp_numeral_loop:
- 123 0117 A6       		cmpsb
- 124 0118 747E     		je	_end_grasp_numeral
- 125 011a 48FFCE   		dec	%rsi
- 126 011d 49FFCF   		dec 	%r15
- 127 0120 75F5     		jnz 	_grasp_numeral_loop
- 128              	
- 129 0122 488D0425 		lea 	tmp_number, %rax
- 129      00000000 
- 130 012a 4C29E0   		sub 	%r12, %rax
- 131 012d 48F7D8   		neg 	%rax
- 132 0130 4883F801 		cmp 	$1, %rax
- 133 0134 742A     		je 	_continue_grasp_numeral
- 134              		raise	bad_symbol_exceprion, lbad_symbol_exceprion
- 134 0136 48C7C001 	>  mov $WRITE,%rax
- 134      000000
- 134 013d 48C7C701 	>  mov $1,%rdi
- 134      000000
- 134 0144 48C7C600 	>  mov $bad_symbol_exceprion,%rsi
- 134      000000
- 134 014b 48C7C20A 	>  mov $lbad_symbol_exceprion,%rdx
- 134      000000
- 134 0152 0F05     	>  syscall
- 134              	>  my_exit 1
- 134 0154 B83C0000 	>>  mov $60,%eax
- 134      00
- 134 0159 BF010000 	>>  mov $1,%edi
- 134      00
- 134 015e 0F05     	>>  syscall
- 135              	_continue_grasp_numeral:
- 136 0160 488D3C25 		lea 	hex_prefix, %rdi
- 136      00000000 
- 137 0168 48FFC7   		inc 	%rdi
- 138 016b A6       		cmpsb
- 139 016c 742A     		je 	_end_grasp_numeral
- 140              	
- 141              		raise	bad_symbol_exceprion, lbad_symbol_exceprion
- 141 016e 48C7C001 	>  mov $WRITE,%rax
+ 104              	 _grasp_operation_loop:
+ 105 00da A6       		cmpsb
+ 106 00db 7409     		je	_end_grasp_operation
+ 107 00dd 48FFCE   		dec	%rsi
+ 108 00e0 49FFCF   		dec 	%r15
+ 109 00e3 75F5     		jnz 	_grasp_operation_loop
+ 110 00e5 C3       		ret
+ 111              	_end_grasp_operation:
+ 112 00e6 48FFCF   		dec 	%rdi
+ 113 00e9 4889FE   		mov 	%rdi, %rsi
+ 114 00ec 488D3C25 		lea 	operation_symbol, %rdi
+ 114      00000000 
+ 115 00f4 48C7C101 		mov 	$1, %rcx
+ 115      000000
+ 116 00fb F3A4     		rep movsb
+ 117 00fd C3       		ret
+ 118              	# ---------------------------------------------------
+ 119              	_grasp_numeral:
+ 120 00fe 49C7C710 		mov 	$numerals_count, %r15
+ 120      000000
+ 121 0105 48C7C101 		mov 	$1, %rcx
+ 121      000000
+ 122 010c 4C89F6   		mov 	%r14, %rsi
+ 123 010f 488D3C25 		lea 	numeral_char_tab, %rdi
+ 123      00000000 
+ 124              	_grasp_numeral_loop:
+ 125 0117 A6       		cmpsb
+ 126 0118 747E     		je	_end_grasp_numeral
+ 127 011a 48FFCE   		dec	%rsi
+ 128 011d 49FFCF   		dec 	%r15
+ 129 0120 75F5     		jnz 	_grasp_numeral_loop
+ 130              	
+ 131 0122 488D0425 		lea 	tmp_number, %rax
+ 131      00000000 
+ 132 012a 4C29E0   		sub 	%r12, %rax
+ 133 012d 48F7D8   		neg 	%rax
+ 134 0130 4883F801 		cmp 	$1, %rax
+ 135 0134 742A     		je 	_continue_grasp_numeral
+ 136              		raise	bad_symbol_exceprion, lbad_symbol_exceprion
+ 136 0136 48C7C001 	>  mov $WRITE,%rax
+ 136      000000
+ 136 013d 48C7C701 	>  mov $1,%rdi
+ 136      000000
+ 136 0144 48C7C600 	>  mov $bad_symbol_exceprion,%rsi
+ 136      000000
+ 136 014b 48C7C20B 	>  mov $lbad_symbol_exceprion,%rdx
+ 136      000000
+ 136 0152 0F05     	>  syscall
+ 136              	>  my_exit 1
+ 136 0154 B83C0000 	>>  mov $60,%eax
+ 136      00
+ 136 0159 BF010000 	>>  mov $1,%edi
+ 136      00
+ 136 015e 0F05     	>>  syscall
+ 137              	_continue_grasp_numeral:
+ 138 0160 488D3C25 		lea 	hex_prefix, %rdi
+ 138      00000000 
 GAS LISTING task.s 			page 5
 
 
- 141      000000
- 141 0175 48C7C701 	>  mov $1,%rdi
- 141      000000
- 141 017c 48C7C600 	>  mov $bad_symbol_exceprion,%rsi
- 141      000000
- 141 0183 48C7C20A 	>  mov $lbad_symbol_exceprion,%rdx
- 141      000000
- 141 018a 0F05     	>  syscall
- 141              	>  my_exit 1
- 141 018c B83C0000 	>>  mov $60,%eax
- 141      00
- 141 0191 BF010000 	>>  mov $1,%edi
- 141      00
- 141 0196 0F05     	>>  syscall
- 142              	_end_grasp_numeral:
- 143 0198 48FFCF   		dec 	%rdi
- 144 019b 4889FE   		mov 	%rdi, %rsi
- 145 019e 4C89E7   		mov 	%r12, %rdi
- 146 01a1 48C7C101 		mov 	$1, %rcx
- 146      000000
- 147 01a8 F3A4     		rep movsb
- 148 01aa 49FFC4   		inc 	%r12
- 149 01ad C3       		ret
- 150              	# ---------------------------------------------------
- 151              	_push_num_to_stack:
- 152 01ae 488D3425 		lea 	tmp_number, %rsi
- 152      00000000 
- 153 01b6 833E00   		cmp 	$0, (%rsi)
- 154 01b9 7410     		jz 	_end_push
- 155 01bb E8410000 		call 	_parse_to_int
- 155      00
- 156 01c0 5A       		pop 	%rdx
- 157 01c1 50       		pushq 	%rax
- 158 01c2 52       		push 	%rdx
- 159 01c3 49FFC2   		inc 	%r10
- 160 01c6 E8010000 		call	_clear_tmp_number
- 160      00
- 161              	_end_push:
- 162 01cb C3       		ret
- 163              	# ---------------------------------------------------
- 164              	_clear_tmp_number:
- 165 01cc 488D3425 		lea	big_empty, %rsi
- 165      00000000 
- 166 01d4 488D3C25 		lea 	tmp_number, %rdi
- 166      00000000 
- 167 01dc 48C7C164 		mov 	$N, %rcx
- 167      000000
- 168 01e3 EB19     		jmp 	_clear_string
- 169              	_clear_operation_symbol:
- 170 01e5 488D3425 		lea	small_empty, %rsi
- 170      00000000 
- 171 01ed 488D3C25 		lea 	operation_symbol, %rdi
- 171      00000000 
- 172 01f5 48C7C101 		mov 	$1, %rcx
- 172      000000
- 173 01fc EB00     		jmp 	_clear_string
- 174              	_clear_string:
+ 139 0168 48FFC7   		inc 	%rdi
+ 140 016b A6       		cmpsb
+ 141 016c 742A     		je 	_end_grasp_numeral
+ 142              	
+ 143              		raise	bad_symbol_exceprion, lbad_symbol_exceprion
+ 143 016e 48C7C001 	>  mov $WRITE,%rax
+ 143      000000
+ 143 0175 48C7C701 	>  mov $1,%rdi
+ 143      000000
+ 143 017c 48C7C600 	>  mov $bad_symbol_exceprion,%rsi
+ 143      000000
+ 143 0183 48C7C20B 	>  mov $lbad_symbol_exceprion,%rdx
+ 143      000000
+ 143 018a 0F05     	>  syscall
+ 143              	>  my_exit 1
+ 143 018c B83C0000 	>>  mov $60,%eax
+ 143      00
+ 143 0191 BF010000 	>>  mov $1,%edi
+ 143      00
+ 143 0196 0F05     	>>  syscall
+ 144              	_end_grasp_numeral:
+ 145 0198 48FFCF   		dec 	%rdi
+ 146 019b 4889FE   		mov 	%rdi, %rsi
+ 147 019e 4C89E7   		mov 	%r12, %rdi
+ 148 01a1 48C7C101 		mov 	$1, %rcx
+ 148      000000
+ 149 01a8 F3A4     		rep movsb
+ 150 01aa 49FFC4   		inc 	%r12
+ 151 01ad C3       		ret
+ 152              	# ---------------------------------------------------
+ 153              	_push_num_to_stack:
+ 154 01ae 488D3425 		lea 	tmp_number, %rsi
+ 154      00000000 
+ 155 01b6 833E00   		cmp 	$0, (%rsi)
+ 156 01b9 7410     		jz 	_end_push
+ 157 01bb E8410000 		call 	_parse_to_int
+ 157      00
+ 158 01c0 5A       		pop 	%rdx
+ 159 01c1 50       		pushq 	%rax
+ 160 01c2 52       		push 	%rdx
+ 161 01c3 49FFC2   		inc 	%r10
+ 162 01c6 E8010000 		call	_clear_tmp_number
+ 162      00
+ 163              	_end_push:
+ 164 01cb C3       		ret
+ 165              	# ---------------------------------------------------
+ 166              	_clear_tmp_number:
+ 167 01cc 488D3425 		lea	big_empty, %rsi
+ 167      00000000 
+ 168 01d4 488D3C25 		lea 	tmp_number, %rdi
+ 168      00000000 
+ 169 01dc 48C7C164 		mov 	$N, %rcx
+ 169      000000
+ 170 01e3 EB19     		jmp 	_clear_string
+ 171              	_clear_operation_symbol:
+ 172 01e5 488D3425 		lea	small_empty, %rsi
+ 172      00000000 
 GAS LISTING task.s 			page 6
 
 
- 175 01fe F3A4     		rep movsb
- 176 0200 C3       		ret
- 177              	# ---------------------------------------------------
- 178              	_parse_to_int:
- 179 0201 488D3425 		lea 	tmp_number, %rsi
- 179      00000000 
- 180 0209 4831C0   		xor 	%rax, %rax
- 181 020c 48C7C102 		mov 	$2, %rcx
- 181      000000
- 182 0213 488D3C25 		lea 	hex_prefix, %rdi
- 182      00000000 
- 183 021b A6       		cmpsb
- 184 021c 740C     		je 	_set_16
- 185 021e 48FFCE   		dec 	%rsi
- 186 0221 48C7C30A 		mov 	$10, %rbx
- 186      000000
- 187 0228 EB0A     		jmp 	_parse_to_int_loop
- 188              	_set_16:
- 189 022a 48FFC6   		inc 	%rsi
- 190 022d 48C7C310 		mov 	$16, %rbx
- 190      000000
- 191              	_parse_to_int_loop:
- 192 0234 8A0E     		mov 	(%rsi), %cl
- 193 0236 80F900   		cmp 	$0, %cl
- 194 0239 7416     		jz 	_end_number
- 195              	
- 196 023b 80E930   		sub 	$'0', %cl
- 197 023e 80F90A   		cmp 	$10, %cl
- 198 0241 7C03     		jl 	_add_numeral
- 199 0243 80E907   		sub 	$7, %cl
- 200              	_add_numeral:
- 201 0246 48F7E3   		mul 	%rbx
- 202 0249 4801C8   		add 	%rcx, %rax
- 203 024c 48FFC6   		inc 	%rsi
- 204 024f EBE3     		jmp 	_parse_to_int_loop
- 205              	_end_number:
- 206 0251 4C8D2425 		lea 	tmp_number, %r12
- 206      00000000 
- 207 0259 C3       		ret
- 208              	# ---------------------------------------------------
- 209              	_execute_operation:
- 210 025a 48C7C600 		mov 	$operation_symbol, %rsi
- 210      000000
- 211 0261 8A0E     		mov 	(%rsi), %cl
- 212 0263 FEC1     		inc 	%cl
- 213 0265 80F901   		cmp 	$1, %cl
- 214 0268 0F842CFE 		je 	_continue_grasp
- 214      FFFF
- 215              	
- 216 026e E83BFFFF 		call 	_push_num_to_stack
- 216      FF
+ 173 01ed 488D3C25 		lea 	operation_symbol, %rdi
+ 173      00000000 
+ 174 01f5 48C7C101 		mov 	$1, %rcx
+ 174      000000
+ 175 01fc EB00     		jmp 	_clear_string
+ 176              	_clear_string:
+ 177 01fe F3A4     		rep movsb
+ 178 0200 C3       		ret
+ 179              	# ---------------------------------------------------
+ 180              	_parse_to_int:
+ 181 0201 488D3425 		lea 	tmp_number, %rsi
+ 181      00000000 
+ 182 0209 4831C0   		xor 	%rax, %rax
+ 183 020c 48C7C102 		mov 	$2, %rcx
+ 183      000000
+ 184 0213 488D3C25 		lea 	hex_prefix, %rdi
+ 184      00000000 
+ 185 021b A6       		cmpsb
+ 186 021c 740C     		je 	_set_16
+ 187 021e 48FFCE   		dec 	%rsi
+ 188 0221 48C7C30A 		mov 	$10, %rbx
+ 188      000000
+ 189 0228 EB0A     		jmp 	_parse_to_int_loop
+ 190              	_set_16:
+ 191 022a 48FFC6   		inc 	%rsi
+ 192 022d 48C7C310 		mov 	$16, %rbx
+ 192      000000
+ 193              	_parse_to_int_loop:
+ 194 0234 8A0E     		mov 	(%rsi), %cl
+ 195 0236 80F900   		cmp 	$0, %cl
+ 196 0239 7416     		jz 	_end_number
+ 197              	
+ 198 023b 80E930   		sub 	$'0', %cl
+ 199 023e 80F90A   		cmp 	$10, %cl
+ 200 0241 7C03     		jl 	_add_numeral
+ 201 0243 80E907   		sub 	$7, %cl
+ 202              	_add_numeral:
+ 203 0246 48F7E3   		mul 	%rbx
+ 204 0249 4801C8   		add 	%rcx, %rax
+ 205 024c 48FFC6   		inc 	%rsi
+ 206 024f EBE3     		jmp 	_parse_to_int_loop
+ 207              	_end_number:
+ 208 0251 4C8D2425 		lea 	tmp_number, %r12
+ 208      00000000 
+ 209 0259 C3       		ret
+ 210              	# ---------------------------------------------------
+ 211              	_execute_operation:
+ 212 025a 48C7C600 		mov 	$operation_symbol, %rsi
+ 212      000000
+ 213 0261 8A0E     		mov 	(%rsi), %cl
+ 214 0263 FEC1     		inc 	%cl
+ 215 0265 80F901   		cmp 	$1, %cl
+ 216 0268 0F842CFE 		je 	_continue_grasp
+ 216      FFFF
  217              	
- 218 0273 48C7C600 		mov 	$operation_symbol, %rsi
- 218      000000
- 219 027a 48C7C101 		mov 	$1, %rcx
- 219      000000
- 220 0281 488D3C25 		lea	op_add, %rdi
+ 218 026e E83BFFFF 		call 	_push_num_to_stack
+ 218      FF
 GAS LISTING task.s 			page 7
 
 
- 220      00000000 
- 221 0289 A6       		cmpsb
- 222 028a 0F849A00 		je	add_op
- 222      0000
- 223              	
- 224 0290 48FFCE   		dec	%rsi
- 225 0293 668D3C25 		lea	op_sub, %di
- 225      00000000 
- 226 029b A6       		cmpsb
- 227 029c 0F84C300 		je	sub_op
- 227      0000
- 228              	
- 229 02a2 48FFCE   		dec	%rsi
- 230 02a5 668D3C25 		lea	op_mov, %di
- 230      00000000 
- 231 02ad A6       		cmpsb
- 232 02ae 0F84EC00 		je	mul_op
- 232      0000
- 233              	
- 234 02b4 48FFCE   		dec	%rsi
- 235 02b7 668D3C25 		lea	op_div, %di
- 235      00000000 
- 236 02bf A6       		cmpsb
- 237 02c0 0F841801 		je	div_op
- 237      0000
- 238              	
- 239 02c6 48FFCE   		dec	%rsi
- 240 02c9 668D3C25 		lea	op_unary_minus, %di
- 240      00000000 
- 241 02d1 A6       		cmpsb
- 242 02d2 0F846201 		je	unary_minus
- 242      0000
- 243              	
- 244 02d8 48FFCE   		dec	%rsi
- 245 02db 668D3C25 		lea	op_and, %di
- 245      00000000 
- 246 02e3 A6       		cmpsb
- 247 02e4 0F84C801 		je	and_op
- 247      0000
- 248              	
- 249 02ea 48FFCE   		dec	%rsi
- 250 02ed 668D3C25 		lea	op_or, %di
- 250      00000000 
- 251 02f5 A6       		cmpsb
- 252 02f6 0F84F401 		je	or_op
- 252      0000
- 253              	
- 254 02fc 48FFCE   		dec	%rsi
- 255 02ff 668D3C25 		lea	op_xor, %di
- 255      00000000 
- 256 0307 A6       		cmpsb
- 257 0308 0F846601 		je	xor_op
- 257      0000
- 258              	
- 259 030e 48FFCE   		dec	%rsi
- 260 0311 668D3C25 		lea	op_exp, %di
- 260      00000000 
+ 219              	
+ 220 0273 48C7C600 		mov 	$operation_symbol, %rsi
+ 220      000000
+ 221 027a 48C7C101 		mov 	$1, %rcx
+ 221      000000
+ 222 0281 488D3C25 		lea	op_add, %rdi
+ 222      00000000 
+ 223 0289 A6       		cmpsb
+ 224 028a 0F849A00 		je	add_op
+ 224      0000
+ 225              	
+ 226 0290 48FFCE   		dec	%rsi
+ 227 0293 668D3C25 		lea	op_sub, %di
+ 227      00000000 
+ 228 029b A6       		cmpsb
+ 229 029c 0F84C300 		je	sub_op
+ 229      0000
+ 230              	
+ 231 02a2 48FFCE   		dec	%rsi
+ 232 02a5 668D3C25 		lea	op_mov, %di
+ 232      00000000 
+ 233 02ad A6       		cmpsb
+ 234 02ae 0F84EC00 		je	mul_op
+ 234      0000
+ 235              	
+ 236 02b4 48FFCE   		dec	%rsi
+ 237 02b7 668D3C25 		lea	op_div, %di
+ 237      00000000 
+ 238 02bf A6       		cmpsb
+ 239 02c0 0F841801 		je	div_op
+ 239      0000
+ 240              	
+ 241 02c6 48FFCE   		dec	%rsi
+ 242 02c9 668D3C25 		lea	op_unary_minus, %di
+ 242      00000000 
+ 243 02d1 A6       		cmpsb
+ 244 02d2 0F849101 		je	unary_minus
+ 244      0000
+ 245              	
+ 246 02d8 48FFCE   		dec	%rsi
+ 247 02db 668D3C25 		lea	op_and, %di
+ 247      00000000 
+ 248 02e3 A6       		cmpsb
+ 249 02e4 0F84F701 		je	and_op
+ 249      0000
+ 250              	
+ 251 02ea 48FFCE   		dec	%rsi
+ 252 02ed 668D3C25 		lea	op_or, %di
+ 252      00000000 
+ 253 02f5 A6       		cmpsb
+ 254 02f6 0F842302 		je	or_op
+ 254      0000
+ 255              	
+ 256 02fc 48FFCE   		dec	%rsi
+ 257 02ff 668D3C25 		lea	op_xor, %di
+ 257      00000000 
+ 258 0307 A6       		cmpsb
 GAS LISTING task.s 			page 8
 
 
- 261 0319 A6       		cmpsb
- 262 031a 0F840E02 		je	exp_op
- 262      0000
- 263              	_end_execute_operation:
- 264 0320 E8C0FEFF 		call 	_clear_operation_symbol
- 264      FF
- 265 0325 E975FDFF 		jmp 	_continue_parse_argument
- 265      FF
- 266              	# ---------------------------------------------------
- 267              	add_op:
- 268 032a 4983FA02 		cmp	$2, %r10
- 269 032e 7D2A     		jge 	_continue_add
- 270              		raise 	few_operands_exception, lfew_operands_exception
- 270 0330 48C7C001 	>  mov $WRITE,%rax
- 270      000000
- 270 0337 48C7C701 	>  mov $1,%rdi
- 270      000000
- 270 033e 48C7C600 	>  mov $few_operands_exception,%rsi
- 270      000000
- 270 0345 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 270      000000
- 270 034c 0F05     	>  syscall
- 270              	>  my_exit 1
- 270 034e B83C0000 	>>  mov $60,%eax
- 270      00
- 270 0353 BF010000 	>>  mov $1,%edi
- 270      00
- 270 0358 0F05     	>>  syscall
- 271              	_continue_add:
- 272 035a 5B       		popq	%rbx
- 273 035b 58       		popq 	%rax
- 274 035c 4801D8   		add 	%rbx, %rax
- 275 035f 50       		pushq	%rax
- 276 0360 49FFCA   		dec 	%r10
- 277 0363 EBBB     		jmp 	_end_execute_operation
- 278              	
- 279              	sub_op:
- 280 0365 4983FA02 		cmp	$2, %r10
- 281 0369 7D2A     		jge 	_continue_sub
- 282              		raise 	few_operands_exception, lfew_operands_exception
- 282 036b 48C7C001 	>  mov $WRITE,%rax
- 282      000000
- 282 0372 48C7C701 	>  mov $1,%rdi
- 282      000000
- 282 0379 48C7C600 	>  mov $few_operands_exception,%rsi
- 282      000000
- 282 0380 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 282      000000
- 282 0387 0F05     	>  syscall
- 282              	>  my_exit 1
- 282 0389 B83C0000 	>>  mov $60,%eax
- 282      00
- 282 038e BF010000 	>>  mov $1,%edi
- 282      00
- 282 0393 0F05     	>>  syscall
- 283              	_continue_sub:
- 284 0395 5B       		popq	%rbx
+ 259 0308 0F849501 		je	xor_op
+ 259      0000
+ 260              	
+ 261 030e 48FFCE   		dec	%rsi
+ 262 0311 668D3C25 		lea	op_exp, %di
+ 262      00000000 
+ 263 0319 A6       		cmpsb
+ 264 031a 0F843D02 		je	exp_op
+ 264      0000
+ 265              	_end_execute_operation:
+ 266 0320 E8C0FEFF 		call 	_clear_operation_symbol
+ 266      FF
+ 267 0325 E975FDFF 		jmp 	_continue_parse_argument
+ 267      FF
+ 268              	# ---------------------------------------------------
+ 269              	add_op:
+ 270 032a 4983FA02 		cmp	$2, %r10
+ 271 032e 7D2A     		jge 	_continue_add
+ 272              		raise 	few_operands_exception, lfew_operands_exception
+ 272 0330 48C7C001 	>  mov $WRITE,%rax
+ 272      000000
+ 272 0337 48C7C701 	>  mov $1,%rdi
+ 272      000000
+ 272 033e 48C7C600 	>  mov $few_operands_exception,%rsi
+ 272      000000
+ 272 0345 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 272      000000
+ 272 034c 0F05     	>  syscall
+ 272              	>  my_exit 1
+ 272 034e B83C0000 	>>  mov $60,%eax
+ 272      00
+ 272 0353 BF010000 	>>  mov $1,%edi
+ 272      00
+ 272 0358 0F05     	>>  syscall
+ 273              	_continue_add:
+ 274 035a 5B       		popq	%rbx
+ 275 035b 58       		popq 	%rax
+ 276 035c 4801D8   		add 	%rbx, %rax
+ 277 035f 50       		pushq	%rax
+ 278 0360 49FFCA   		dec 	%r10
+ 279 0363 EBBB     		jmp 	_end_execute_operation
+ 280              	
+ 281              	sub_op:
+ 282 0365 4983FA02 		cmp	$2, %r10
+ 283 0369 7D2A     		jge 	_continue_sub
+ 284              		raise 	few_operands_exception, lfew_operands_exception
+ 284 036b 48C7C001 	>  mov $WRITE,%rax
+ 284      000000
+ 284 0372 48C7C701 	>  mov $1,%rdi
+ 284      000000
+ 284 0379 48C7C600 	>  mov $few_operands_exception,%rsi
+ 284      000000
+ 284 0380 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 284      000000
+ 284 0387 0F05     	>  syscall
+ 284              	>  my_exit 1
+ 284 0389 B83C0000 	>>  mov $60,%eax
 GAS LISTING task.s 			page 9
 
 
- 285 0396 58       		popq 	%rax
- 286 0397 4829D8   		sub 	%rbx, %rax
- 287 039a 50       		pushq	%rax
- 288 039b 49FFCA   		dec 	%r10
- 289 039e EB80     		jmp 	_end_execute_operation
- 290              	
- 291              	mul_op:
- 292 03a0 4983FA02 		cmp	$2, %r10
- 293 03a4 7D2A     		jge 	_continue_mul
- 294              		raise 	few_operands_exception, lfew_operands_exception
- 294 03a6 48C7C001 	>  mov $WRITE,%rax
- 294      000000
- 294 03ad 48C7C701 	>  mov $1,%rdi
- 294      000000
- 294 03b4 48C7C600 	>  mov $few_operands_exception,%rsi
- 294      000000
- 294 03bb 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 294      000000
- 294 03c2 0F05     	>  syscall
- 294              	>  my_exit 1
- 294 03c4 B83C0000 	>>  mov $60,%eax
- 294      00
- 294 03c9 BF010000 	>>  mov $1,%edi
- 294      00
- 294 03ce 0F05     	>>  syscall
- 295              	_continue_mul:
- 296 03d0 5B       		popq	%rbx
- 297 03d1 58       		popq 	%rax
- 298 03d2 48F7E3   		mul 	%rbx
- 299 03d5 50       		pushq	%rax
- 300 03d6 49FFCA   		dec 	%r10
- 301 03d9 E942FFFF 		jmp 	_end_execute_operation
- 301      FF
- 302              	
- 303              	div_op:
- 304 03de 4983FA02 		cmp	$2, %r10
- 305 03e2 7D2A     		jge 	_continue_div
- 306              		raise 	few_operands_exception, lfew_operands_exception
- 306 03e4 48C7C001 	>  mov $WRITE,%rax
- 306      000000
- 306 03eb 48C7C701 	>  mov $1,%rdi
- 306      000000
- 306 03f2 48C7C600 	>  mov $few_operands_exception,%rsi
- 306      000000
- 306 03f9 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 306      000000
- 306 0400 0F05     	>  syscall
- 306              	>  my_exit 1
- 306 0402 B83C0000 	>>  mov $60,%eax
- 306      00
- 306 0407 BF010000 	>>  mov $1,%edi
- 306      00
- 306 040c 0F05     	>>  syscall
- 307              	_continue_div:
- 308 040e 4831C9   		xor 	%rcx, %rcx
- 309 0411 5B       		popq	%rbx
- 310 0412 58       		popq 	%rax
+ 284      00
+ 284 038e BF010000 	>>  mov $1,%edi
+ 284      00
+ 284 0393 0F05     	>>  syscall
+ 285              	_continue_sub:
+ 286 0395 5B       		popq	%rbx
+ 287 0396 58       		popq 	%rax
+ 288 0397 4829D8   		sub 	%rbx, %rax
+ 289 039a 50       		pushq	%rax
+ 290 039b 49FFCA   		dec 	%r10
+ 291 039e EB80     		jmp 	_end_execute_operation
+ 292              	
+ 293              	mul_op:
+ 294 03a0 4983FA02 		cmp	$2, %r10
+ 295 03a4 7D2A     		jge 	_continue_mul
+ 296              		raise 	few_operands_exception, lfew_operands_exception
+ 296 03a6 48C7C001 	>  mov $WRITE,%rax
+ 296      000000
+ 296 03ad 48C7C701 	>  mov $1,%rdi
+ 296      000000
+ 296 03b4 48C7C600 	>  mov $few_operands_exception,%rsi
+ 296      000000
+ 296 03bb 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 296      000000
+ 296 03c2 0F05     	>  syscall
+ 296              	>  my_exit 1
+ 296 03c4 B83C0000 	>>  mov $60,%eax
+ 296      00
+ 296 03c9 BF010000 	>>  mov $1,%edi
+ 296      00
+ 296 03ce 0F05     	>>  syscall
+ 297              	_continue_mul:
+ 298 03d0 5B       		popq	%rbx
+ 299 03d1 58       		popq 	%rax
+ 300 03d2 48F7E3   		mul 	%rbx
+ 301 03d5 50       		pushq	%rax
+ 302 03d6 49FFCA   		dec 	%r10
+ 303 03d9 E942FFFF 		jmp 	_end_execute_operation
+ 303      FF
+ 304              	
+ 305              	div_op:
+ 306 03de 4983FA02 		cmp	$2, %r10
+ 307 03e2 7D2A     		jge 	_continue_div
+ 308              		raise 	few_operands_exception, lfew_operands_exception
+ 308 03e4 48C7C001 	>  mov $WRITE,%rax
+ 308      000000
+ 308 03eb 48C7C701 	>  mov $1,%rdi
+ 308      000000
+ 308 03f2 48C7C600 	>  mov $few_operands_exception,%rsi
+ 308      000000
+ 308 03f9 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 308      000000
+ 308 0400 0F05     	>  syscall
+ 308              	>  my_exit 1
+ 308 0402 B83C0000 	>>  mov $60,%eax
+ 308      00
+ 308 0407 BF010000 	>>  mov $1,%edi
 GAS LISTING task.s 			page 10
 
 
- 311 0413 4883F800 		cmp 	$0, %rax
- 312 0417 7D0A     		jge 	_do_div
- 313 0419 48C7C101 		mov 	$1, %rcx
- 313      000000
- 314 0420 48F7D8   		neg 	%rax
- 315              	
- 316              	_do_div:
- 317 0423 4831D2   		xor 	%rdx, %rdx
- 318 0426 48F7FB   		idiv 	%rbx
- 319 0429 4885C9   		test 	%rcx, %rcx
- 320 042c 7403     		jz 	_complete_div
- 321 042e 48F7D8   		neg 	%rax
- 322              	_complete_div:
- 323 0431 50       		pushq 	%rax
- 324 0432 49FFCA   		dec 	%r10
- 325 0435 E9E6FEFF 		jmp 	_end_execute_operation
- 325      FF
- 326              	
- 327              	unary_minus:
- 328 043a 4983FA01 		cmp	$1, %r10
- 329 043e 7D2A     		jge 	_continue_unary_minus
- 330              		raise 	few_operands_exception, lfew_operands_exception
- 330 0440 48C7C001 	>  mov $WRITE,%rax
- 330      000000
- 330 0447 48C7C701 	>  mov $1,%rdi
- 330      000000
- 330 044e 48C7C600 	>  mov $few_operands_exception,%rsi
- 330      000000
- 330 0455 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 330      000000
- 330 045c 0F05     	>  syscall
- 330              	>  my_exit 1
- 330 045e B83C0000 	>>  mov $60,%eax
- 330      00
- 330 0463 BF010000 	>>  mov $1,%edi
- 330      00
- 330 0468 0F05     	>>  syscall
- 331              	_continue_unary_minus:
- 332 046a 58       		popq 	%rax
- 333 046b 48F7D8   		neg 	%rax
- 334 046e 50       		pushq 	%rax
- 335 046f E9ACFEFF 		jmp 	_end_execute_operation
- 335      FF
- 336              	
- 337              	xor_op:
- 338 0474 4983FA02 		cmp	$2, %r10
- 339 0478 7D2A     		jge 	_continue_xor
- 340              		raise 	few_operands_exception, lfew_operands_exception
- 340 047a 48C7C001 	>  mov $WRITE,%rax
- 340      000000
- 340 0481 48C7C701 	>  mov $1,%rdi
- 340      000000
- 340 0488 48C7C600 	>  mov $few_operands_exception,%rsi
- 340      000000
- 340 048f 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 340      000000
- 340 0496 0F05     	>  syscall
+ 308      00
+ 308 040c 0F05     	>>  syscall
+ 309              	_continue_div:
+ 310 040e 4831C9   		xor 	%rcx, %rcx
+ 311 0411 5B       		popq	%rbx
+ 312 0412 58       		popq 	%rax
+ 313 0413 4885DB   		test 	%rbx, %rbx
+ 314 0416 752A     		jnz 	_continue_div2
+ 315              		raise 	division_by_zero_exception, ldivision_by_zero_exception
+ 315 0418 48C7C001 	>  mov $WRITE,%rax
+ 315      000000
+ 315 041f 48C7C701 	>  mov $1,%rdi
+ 315      000000
+ 315 0426 48C7C600 	>  mov $division_by_zero_exception,%rsi
+ 315      000000
+ 315 042d 48C7C211 	>  mov $ldivision_by_zero_exception,%rdx
+ 315      000000
+ 315 0434 0F05     	>  syscall
+ 315              	>  my_exit 1
+ 315 0436 B83C0000 	>>  mov $60,%eax
+ 315      00
+ 315 043b BF010000 	>>  mov $1,%edi
+ 315      00
+ 315 0440 0F05     	>>  syscall
+ 316              	_continue_div2:
+ 317 0442 4883F800 		cmp 	$0, %rax
+ 318 0446 7D0A     		jge 	_do_div
+ 319 0448 48C7C101 		mov 	$1, %rcx
+ 319      000000
+ 320 044f 48F7D8   		neg 	%rax
+ 321              	
+ 322              	_do_div:
+ 323 0452 4831D2   		xor 	%rdx, %rdx
+ 324 0455 48F7FB   		idiv 	%rbx
+ 325 0458 4885C9   		test 	%rcx, %rcx
+ 326 045b 7403     		jz 	_complete_div
+ 327 045d 48F7D8   		neg 	%rax
+ 328              	_complete_div:
+ 329 0460 50       		pushq 	%rax
+ 330 0461 49FFCA   		dec 	%r10
+ 331 0464 E9B7FEFF 		jmp 	_end_execute_operation
+ 331      FF
+ 332              	
+ 333              	unary_minus:
+ 334 0469 4983FA01 		cmp	$1, %r10
+ 335 046d 7D2A     		jge 	_continue_unary_minus
+ 336              		raise 	few_operands_exception, lfew_operands_exception
+ 336 046f 48C7C001 	>  mov $WRITE,%rax
+ 336      000000
+ 336 0476 48C7C701 	>  mov $1,%rdi
+ 336      000000
+ 336 047d 48C7C600 	>  mov $few_operands_exception,%rsi
+ 336      000000
+ 336 0484 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 336      000000
+ 336 048b 0F05     	>  syscall
+ 336              	>  my_exit 1
 GAS LISTING task.s 			page 11
 
 
- 340              	>  my_exit 1
- 340 0498 B83C0000 	>>  mov $60,%eax
- 340      00
- 340 049d BF010000 	>>  mov $1,%edi
- 340      00
- 340 04a2 0F05     	>>  syscall
- 341              	_continue_xor:
- 342 04a4 5B       		popq	%rbx
- 343 04a5 58       		popq 	%rax
- 344 04a6 4831D8   		xor 	%rbx, %rax
- 345 04a9 50       		pushq	%rax
- 346 04aa 49FFCA   		dec 	%r10
- 347 04ad E96EFEFF 		jmp 	_end_execute_operation
- 347      FF
- 348              	
- 349              	and_op:
- 350 04b2 4983FA02 		cmp	$2, %r10
- 351 04b6 7D2A     		jge 	_continue_and
- 352              		raise 	few_operands_exception, lfew_operands_exception
- 352 04b8 48C7C001 	>  mov $WRITE,%rax
- 352      000000
- 352 04bf 48C7C701 	>  mov $1,%rdi
- 352      000000
- 352 04c6 48C7C600 	>  mov $few_operands_exception,%rsi
- 352      000000
- 352 04cd 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 352      000000
- 352 04d4 0F05     	>  syscall
- 352              	>  my_exit 1
- 352 04d6 B83C0000 	>>  mov $60,%eax
- 352      00
- 352 04db BF010000 	>>  mov $1,%edi
- 352      00
- 352 04e0 0F05     	>>  syscall
- 353              	_continue_and:
- 354 04e2 5B       		popq	%rbx
- 355 04e3 58       		popq 	%rax
- 356 04e4 4821D8   		and 	%rbx, %rax
- 357 04e7 50       		pushq	%rax
- 358 04e8 49FFCA   		dec 	%r10
- 359 04eb E930FEFF 		jmp 	_end_execute_operation
- 359      FF
- 360              	
- 361              	or_op:
- 362 04f0 4983FA02 		cmp	$2, %r10
- 363 04f4 7D2A     		jge 	_continue_or
- 364              		raise 	few_operands_exception, lfew_operands_exception
- 364 04f6 48C7C001 	>  mov $WRITE,%rax
- 364      000000
- 364 04fd 48C7C701 	>  mov $1,%rdi
- 364      000000
- 364 0504 48C7C600 	>  mov $few_operands_exception,%rsi
- 364      000000
- 364 050b 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 364      000000
- 364 0512 0F05     	>  syscall
- 364              	>  my_exit 1
+ 336 048d B83C0000 	>>  mov $60,%eax
+ 336      00
+ 336 0492 BF010000 	>>  mov $1,%edi
+ 336      00
+ 336 0497 0F05     	>>  syscall
+ 337              	_continue_unary_minus:
+ 338 0499 58       		popq 	%rax
+ 339 049a 48F7D8   		neg 	%rax
+ 340 049d 50       		pushq 	%rax
+ 341 049e E97DFEFF 		jmp 	_end_execute_operation
+ 341      FF
+ 342              	
+ 343              	xor_op:
+ 344 04a3 4983FA02 		cmp	$2, %r10
+ 345 04a7 7D2A     		jge 	_continue_xor
+ 346              		raise 	few_operands_exception, lfew_operands_exception
+ 346 04a9 48C7C001 	>  mov $WRITE,%rax
+ 346      000000
+ 346 04b0 48C7C701 	>  mov $1,%rdi
+ 346      000000
+ 346 04b7 48C7C600 	>  mov $few_operands_exception,%rsi
+ 346      000000
+ 346 04be 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 346      000000
+ 346 04c5 0F05     	>  syscall
+ 346              	>  my_exit 1
+ 346 04c7 B83C0000 	>>  mov $60,%eax
+ 346      00
+ 346 04cc BF010000 	>>  mov $1,%edi
+ 346      00
+ 346 04d1 0F05     	>>  syscall
+ 347              	_continue_xor:
+ 348 04d3 5B       		popq	%rbx
+ 349 04d4 58       		popq 	%rax
+ 350 04d5 4831D8   		xor 	%rbx, %rax
+ 351 04d8 50       		pushq	%rax
+ 352 04d9 49FFCA   		dec 	%r10
+ 353 04dc E93FFEFF 		jmp 	_end_execute_operation
+ 353      FF
+ 354              	
+ 355              	and_op:
+ 356 04e1 4983FA02 		cmp	$2, %r10
+ 357 04e5 7D2A     		jge 	_continue_and
+ 358              		raise 	few_operands_exception, lfew_operands_exception
+ 358 04e7 48C7C001 	>  mov $WRITE,%rax
+ 358      000000
+ 358 04ee 48C7C701 	>  mov $1,%rdi
+ 358      000000
+ 358 04f5 48C7C600 	>  mov $few_operands_exception,%rsi
+ 358      000000
+ 358 04fc 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 358      000000
+ 358 0503 0F05     	>  syscall
+ 358              	>  my_exit 1
+ 358 0505 B83C0000 	>>  mov $60,%eax
+ 358      00
+ 358 050a BF010000 	>>  mov $1,%edi
 GAS LISTING task.s 			page 12
 
 
- 364 0514 B83C0000 	>>  mov $60,%eax
- 364      00
- 364 0519 BF010000 	>>  mov $1,%edi
- 364      00
- 364 051e 0F05     	>>  syscall
- 365              	_continue_or:
- 366 0520 5B       		popq	%rbx
- 367 0521 58       		popq 	%rax
- 368 0522 4809D8   		or 	%rbx, %rax
- 369 0525 50       		pushq	%rax
- 370 0526 49FFCA   		dec 	%r10
- 371 0529 E9F2FDFF 		jmp 	_end_execute_operation
- 371      FF
- 372              	
- 373              	exp_op:
- 374 052e 4983FA02 		cmp	$2, %r10
- 375 0532 0F8D6CFF 		jge 	_continue_xor
- 375      FFFF
- 376              		raise 	few_operands_exception, lfew_operands_exception
- 376 0538 48C7C001 	>  mov $WRITE,%rax
- 376      000000
- 376 053f 48C7C701 	>  mov $1,%rdi
- 376      000000
- 376 0546 48C7C600 	>  mov $few_operands_exception,%rsi
- 376      000000
- 376 054d 48C7C20D 	>  mov $lfew_operands_exception,%rdx
- 376      000000
- 376 0554 0F05     	>  syscall
- 376              	>  my_exit 1
- 376 0556 B83C0000 	>>  mov $60,%eax
- 376      00
- 376 055b BF010000 	>>  mov $1,%edi
- 376      00
- 376 0560 0F05     	>>  syscall
- 377              	_continue_exp:
- 378 0562 5B       		popq	%rbx
- 379 0563 59       		popq 	%rcx
- 380 0564 48C7C001 		mov 	$1, %rax
- 380      000000
- 381 056b 4883FB00 		cmp 	$0, %rbx
- 382 056f 7F0B     		jg	_exp_loop
- 383 0571 7411     		je 	_exp_save
- 384 0573 48C7C000 		mov 	$0, %rax
- 384      000000
- 385 057a EB08     		jmp 	_exp_save
- 386              	_exp_loop:
- 387 057c 48F7E1   		mul 	%rcx
- 388 057f 48FFCB   		dec 	%rbx
- 389 0582 75F8     		jnz 	_exp_loop
- 390              	_exp_save:
- 391 0584 50       		pushq	%rax
- 392 0585 49FFCA   		dec 	%r10
- 393 0588 E993FDFF 		jmp 	_end_execute_operation
- 393      FF
- 394              	# ---------------------------------------------------
- 395              	_error:
- 396 058d 48C7C001 		mov	$WRITE, %rax
+ 358      00
+ 358 050f 0F05     	>>  syscall
+ 359              	_continue_and:
+ 360 0511 5B       		popq	%rbx
+ 361 0512 58       		popq 	%rax
+ 362 0513 4821D8   		and 	%rbx, %rax
+ 363 0516 50       		pushq	%rax
+ 364 0517 49FFCA   		dec 	%r10
+ 365 051a E901FEFF 		jmp 	_end_execute_operation
+ 365      FF
+ 366              	
+ 367              	or_op:
+ 368 051f 4983FA02 		cmp	$2, %r10
+ 369 0523 7D2A     		jge 	_continue_or
+ 370              		raise 	few_operands_exception, lfew_operands_exception
+ 370 0525 48C7C001 	>  mov $WRITE,%rax
+ 370      000000
+ 370 052c 48C7C701 	>  mov $1,%rdi
+ 370      000000
+ 370 0533 48C7C600 	>  mov $few_operands_exception,%rsi
+ 370      000000
+ 370 053a 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 370      000000
+ 370 0541 0F05     	>  syscall
+ 370              	>  my_exit 1
+ 370 0543 B83C0000 	>>  mov $60,%eax
+ 370      00
+ 370 0548 BF010000 	>>  mov $1,%edi
+ 370      00
+ 370 054d 0F05     	>>  syscall
+ 371              	_continue_or:
+ 372 054f 5B       		popq	%rbx
+ 373 0550 58       		popq 	%rax
+ 374 0551 4809D8   		or 	%rbx, %rax
+ 375 0554 50       		pushq	%rax
+ 376 0555 49FFCA   		dec 	%r10
+ 377 0558 E9C3FDFF 		jmp 	_end_execute_operation
+ 377      FF
+ 378              	
+ 379              	exp_op:
+ 380 055d 4983FA02 		cmp	$2, %r10
+ 381 0561 7D2A     		jge 	_continue_exp
+ 382              		raise 	few_operands_exception, lfew_operands_exception
+ 382 0563 48C7C001 	>  mov $WRITE,%rax
+ 382      000000
+ 382 056a 48C7C701 	>  mov $1,%rdi
+ 382      000000
+ 382 0571 48C7C600 	>  mov $few_operands_exception,%rsi
+ 382      000000
+ 382 0578 48C7C20D 	>  mov $lfew_operands_exception,%rdx
+ 382      000000
+ 382 057f 0F05     	>  syscall
+ 382              	>  my_exit 1
+ 382 0581 B83C0000 	>>  mov $60,%eax
+ 382      00
+ 382 0586 BF010000 	>>  mov $1,%edi
+ 382      00
 GAS LISTING task.s 			page 13
 
 
- 396      000000
- 397 0594 48C7C701 		mov	$1, %rdi
- 397      000000
- 398 059b 488D3425 		lea	err_messg, %rsi
- 398      00000000 
- 399 05a3 48C7C210 		mov	$lerr_messg, %rdx
- 399      000000
- 400 05aa 0F05     		syscall
- 401 05ac EB00     		jmp	_exit
- 402              	# ---------------------------------------------------
- 403              	_exit:
- 404 05ae 48C7C03C 		mov	$EXIT, %rax
- 404      000000
- 405 05b5 48C7C700 		mov	$0, %rdi
+ 382 058b 0F05     	>>  syscall
+ 383              	_continue_exp:
+ 384 058d 5B       		popq	%rbx
+ 385 058e 59       		popq 	%rcx
+ 386 058f 48C7C001 		mov 	$1, %rax
+ 386      000000
+ 387 0596 4883FB00 		cmp 	$0, %rbx
+ 388 059a 7F0B     		jg	_exp_loop
+ 389 059c 7411     		je 	_exp_save
+ 390 059e 48C7C000 		mov 	$0, %rax
+ 390      000000
+ 391 05a5 EB08     		jmp 	_exp_save
+ 392              	_exp_loop:
+ 393 05a7 48F7E1   		mul 	%rcx
+ 394 05aa 48FFCB   		dec 	%rbx
+ 395 05ad 75F8     		jnz 	_exp_loop
+ 396              	_exp_save:
+ 397 05af 50       		pushq	%rax
+ 398 05b0 49FFCA   		dec 	%r10
+ 399 05b3 E968FDFF 		jmp 	_end_execute_operation
+ 399      FF
+ 400              	# ---------------------------------------------------
+ 401              	_error:
+ 402 05b8 48C7C001 		mov	$WRITE, %rax
+ 402      000000
+ 403 05bf 48C7C701 		mov	$1, %rdi
+ 403      000000
+ 404 05c6 488D3425 		lea	err_messg, %rsi
+ 404      00000000 
+ 405 05ce 48C7C210 		mov	$lerr_messg, %rdx
  405      000000
- 406 05bc 0F05     		syscall
- 407              	# ---------------------------------------------------
- 408              	_numprint:
- 409 05be 4883F800 		cmp 	$0, %rax
- 410 05c2 7D23     		jge 	_0b
- 411 05c4 50       		pushq 	%rax
- 412 05c5 48C7C001 		mov 	$WRITE, %rax
- 412      000000
- 413 05cc 48C7C701 		mov 	$1, %rdi
- 413      000000
- 414 05d3 48C7C600 		mov 	$op_sub, %rsi
- 414      000000
- 415 05da 48C7C201 		mov 	$1, %rdx
- 415      000000
- 416 05e1 0F05     		syscall
- 417 05e3 58       		popq 	%rax
- 418 05e4 48F7D8   		neg 	%rax
- 419              	_0b:
- 420 05e7 4831C9   		xor	%rcx, %rcx
- 421 05ea 48C7C30A 		movq	$10, %rbx
+ 406 05d5 0F05     		syscall
+ 407 05d7 EB00     		jmp	_exit
+ 408              	# ---------------------------------------------------
+ 409              	_exit:
+ 410 05d9 48C7C03C 		mov	$EXIT, %rax
+ 410      000000
+ 411 05e0 48C7C700 		mov	$0, %rdi
+ 411      000000
+ 412 05e7 0F05     		syscall
+ 413              	# ---------------------------------------------------
+ 414              	_numprint:
+ 415 05e9 4883F800 		cmp 	$0, %rax
+ 416 05ed 7D23     		jge 	_0b
+ 417 05ef 50       		pushq 	%rax
+ 418 05f0 48C7C001 		mov 	$WRITE, %rax
+ 418      000000
+ 419 05f7 48C7C701 		mov 	$1, %rdi
+ 419      000000
+ 420 05fe 48C7C600 		mov 	$op_sub, %rsi
+ 420      000000
+ 421 0605 48C7C201 		mov 	$1, %rdx
  421      000000
- 422              	_1b:
- 423 05f1 4831D2   		xorq	%rdx, %rdx
- 424 05f4 48F7F3   		div	%rbx
- 425 05f7 52       		pushq	%rdx
- 426 05f8 48FFC1   		inc	%rcx
- 427 05fb 4885C0   		testq	%rax, %rax
- 428 05fe 75F1     		jnz	_1b
- 429              	_2b:
- 430 0600 58       		popq	%rax
- 431 0601 488D3425 		lea	numeral_char_tab, %rsi
- 431      00000000 
- 432 0609 4801C6   		add 	%rax, %rsi
- 433 060c 51       		push 	%rcx
- 434 060d 48C7C001 		mov 	$WRITE, %rax
- 434      000000
- 435 0614 48C7C701 		mov 	$1, %rdi
- 435      000000
- 436 061b 48C7C201 		mov 	$1, %rdx
- 436      000000
- 437 0622 0F05     		syscall
- 438 0624 59       		pop 	%rcx
+ 422 060c 0F05     		syscall
+ 423 060e 58       		popq 	%rax
+ 424 060f 48F7D8   		neg 	%rax
+ 425              	_0b:
 GAS LISTING task.s 			page 14
 
 
- 439 0625 48FFC9   		dec	%rcx
- 440 0628 75D6     		jnz	_2b
- 441 062a 488D3425 		lea 	line_break, %rsi
- 441      00000000 
- 442 0632 48C7C001 		mov 	$WRITE, %rax
+ 426 0612 4831C9   		xor	%rcx, %rcx
+ 427 0615 48C7C30A 		movq	$10, %rbx
+ 427      000000
+ 428              	_1b:
+ 429 061c 4831D2   		xorq	%rdx, %rdx
+ 430 061f 48F7F3   		div	%rbx
+ 431 0622 52       		pushq	%rdx
+ 432 0623 48FFC1   		inc	%rcx
+ 433 0626 4885C0   		testq	%rax, %rax
+ 434 0629 75F1     		jnz	_1b
+ 435              	_2b:
+ 436 062b 58       		popq	%rax
+ 437 062c 488D3425 		lea	numeral_char_tab, %rsi
+ 437      00000000 
+ 438 0634 4801C6   		add 	%rax, %rsi
+ 439 0637 51       		push 	%rcx
+ 440 0638 48C7C001 		mov 	$WRITE, %rax
+ 440      000000
+ 441 063f 48C7C701 		mov 	$1, %rdi
+ 441      000000
+ 442 0646 48C7C201 		mov 	$1, %rdx
  442      000000
- 443 0639 48C7C701 		mov 	$1, %rdi
- 443      000000
- 444 0640 48C7C201 		mov 	$1, %rdx
- 444      000000
- 445 0647 0F05     		syscall
- 446              		my_exit...
- 446 0649 B83C0000 	>  mov $60,%eax
- 446      00
- 446 064e BF000000 	>  mov $0,%edi
- 446      00
- 446 0653 0F05     	>  syscall
+ 443 064d 0F05     		syscall
+ 444 064f 59       		pop 	%rcx
+ 445 0650 48FFC9   		dec	%rcx
+ 446 0653 75D6     		jnz	_2b
+ 447 0655 488D3425 		lea 	line_break, %rsi
+ 447      00000000 
+ 448 065d 48C7C001 		mov 	$WRITE, %rax
+ 448      000000
+ 449 0664 48C7C701 		mov 	$1, %rdi
+ 449      000000
+ 450 066b 48C7C201 		mov 	$1, %rdx
+ 450      000000
+ 451 0672 0F05     		syscall
+ 452              		my_exit
+ 452 0674 B83C0000 	>  mov $60,%eax
+ 452      00
+ 452 0679 BF000000 	>  mov $0,%edi
+ 452      00
+ 452 067e 0F05     	>  syscall
 GAS LISTING task.s 			page 15
 
 
 DEFINED SYMBOLS
-              task.s:52     .text:0000000000000000 _start
+              task.s:54     .text:0000000000000000 _start
               task.s:3      *ABS*:0000000000000064 N
               task.s:4      *ABS*:0000000000000001 WRITE
               task.s:5      *ABS*:000000000000003c EXIT
@@ -834,63 +858,66 @@ DEFINED SYMBOLS
               task.s:31     .data:0000000000000111 few_operands_exception
               task.s:32     *ABS*:000000000000000d lfew_operands_exception
               task.s:33     .data:000000000000011e bad_symbol_exceprion
-              task.s:34     *ABS*:000000000000000a lbad_symbol_exceprion
-              task.s:59     .text:000000000000003a _continue
-              task.s:73     .text:0000000000000085 _parse_argument
-              task.s:65     .text:000000000000004f _result
-              task.s:69     .text:000000000000007f _continue_result
-              task.s:408    .text:00000000000005be _numprint
-              task.s:87     .text:00000000000000a7 _end_argument
-              task.s:97     .text:00000000000000c1 _grasp_operation_symbol
-              task.s:209    .text:000000000000025a _execute_operation
-              task.s:81     .text:000000000000009a _continue_grasp
-              task.s:117    .text:00000000000000fe _grasp_numeral
-              task.s:83     .text:000000000000009f _continue_parse_argument
-              task.s:151    .text:00000000000001ae _push_num_to_stack
-              task.s:102    .text:00000000000000da _grasp_operation_loop
-              task.s:109    .text:00000000000000e6 _end_grasp_operation
-              task.s:122    .text:0000000000000117 _grasp_numeral_loop
-              task.s:142    .text:0000000000000198 _end_grasp_numeral
-              task.s:135    .text:0000000000000160 _continue_grasp_numeral
-              task.s:161    .text:00000000000001cb _end_push
-              task.s:178    .text:0000000000000201 _parse_to_int
-              task.s:164    .text:00000000000001cc _clear_tmp_number
-              task.s:174    .text:00000000000001fe _clear_string
-              task.s:169    .text:00000000000001e5 _clear_operation_symbol
-              task.s:188    .text:000000000000022a _set_16
+              task.s:34     *ABS*:000000000000000b lbad_symbol_exceprion
+              task.s:35     .data:0000000000000129 division_by_zero_exception
+              task.s:36     *ABS*:0000000000000011 ldivision_by_zero_exception
+              task.s:61     .text:000000000000003a _continue
+              task.s:75     .text:0000000000000085 _parse_argument
+              task.s:67     .text:000000000000004f _result
+              task.s:71     .text:000000000000007f _continue_result
+              task.s:414    .text:00000000000005e9 _numprint
+              task.s:89     .text:00000000000000a7 _end_argument
+              task.s:99     .text:00000000000000c1 _grasp_operation_symbol
+              task.s:211    .text:000000000000025a _execute_operation
+              task.s:83     .text:000000000000009a _continue_grasp
+              task.s:119    .text:00000000000000fe _grasp_numeral
+              task.s:85     .text:000000000000009f _continue_parse_argument
+              task.s:153    .text:00000000000001ae _push_num_to_stack
+              task.s:104    .text:00000000000000da _grasp_operation_loop
+              task.s:111    .text:00000000000000e6 _end_grasp_operation
+              task.s:124    .text:0000000000000117 _grasp_numeral_loop
+              task.s:144    .text:0000000000000198 _end_grasp_numeral
+              task.s:137    .text:0000000000000160 _continue_grasp_numeral
+              task.s:163    .text:00000000000001cb _end_push
+              task.s:180    .text:0000000000000201 _parse_to_int
+              task.s:166    .text:00000000000001cc _clear_tmp_number
+              task.s:176    .text:00000000000001fe _clear_string
 GAS LISTING task.s 			page 16
 
 
-              task.s:191    .text:0000000000000234 _parse_to_int_loop
-              task.s:205    .text:0000000000000251 _end_number
-              task.s:200    .text:0000000000000246 _add_numeral
-              task.s:267    .text:000000000000032a add_op
-              task.s:279    .text:0000000000000365 sub_op
-              task.s:291    .text:00000000000003a0 mul_op
-              task.s:303    .text:00000000000003de div_op
-              task.s:327    .text:000000000000043a unary_minus
-              task.s:349    .text:00000000000004b2 and_op
-              task.s:361    .text:00000000000004f0 or_op
-              task.s:337    .text:0000000000000474 xor_op
-              task.s:373    .text:000000000000052e exp_op
-              task.s:263    .text:0000000000000320 _end_execute_operation
-              task.s:271    .text:000000000000035a _continue_add
-              task.s:283    .text:0000000000000395 _continue_sub
-              task.s:295    .text:00000000000003d0 _continue_mul
-              task.s:307    .text:000000000000040e _continue_div
-              task.s:316    .text:0000000000000423 _do_div
-              task.s:322    .text:0000000000000431 _complete_div
-              task.s:331    .text:000000000000046a _continue_unary_minus
-              task.s:341    .text:00000000000004a4 _continue_xor
-              task.s:353    .text:00000000000004e2 _continue_and
-              task.s:365    .text:0000000000000520 _continue_or
-              task.s:377    .text:0000000000000562 _continue_exp
-              task.s:386    .text:000000000000057c _exp_loop
-              task.s:390    .text:0000000000000584 _exp_save
-              task.s:395    .text:000000000000058d _error
-              task.s:403    .text:00000000000005ae _exit
-              task.s:419    .text:00000000000005e7 _0b
-              task.s:422    .text:00000000000005f1 _1b
-              task.s:429    .text:0000000000000600 _2b
+              task.s:171    .text:00000000000001e5 _clear_operation_symbol
+              task.s:190    .text:000000000000022a _set_16
+              task.s:193    .text:0000000000000234 _parse_to_int_loop
+              task.s:207    .text:0000000000000251 _end_number
+              task.s:202    .text:0000000000000246 _add_numeral
+              task.s:269    .text:000000000000032a add_op
+              task.s:281    .text:0000000000000365 sub_op
+              task.s:293    .text:00000000000003a0 mul_op
+              task.s:305    .text:00000000000003de div_op
+              task.s:333    .text:0000000000000469 unary_minus
+              task.s:355    .text:00000000000004e1 and_op
+              task.s:367    .text:000000000000051f or_op
+              task.s:343    .text:00000000000004a3 xor_op
+              task.s:379    .text:000000000000055d exp_op
+              task.s:265    .text:0000000000000320 _end_execute_operation
+              task.s:273    .text:000000000000035a _continue_add
+              task.s:285    .text:0000000000000395 _continue_sub
+              task.s:297    .text:00000000000003d0 _continue_mul
+              task.s:309    .text:000000000000040e _continue_div
+              task.s:316    .text:0000000000000442 _continue_div2
+              task.s:322    .text:0000000000000452 _do_div
+              task.s:328    .text:0000000000000460 _complete_div
+              task.s:337    .text:0000000000000499 _continue_unary_minus
+              task.s:347    .text:00000000000004d3 _continue_xor
+              task.s:359    .text:0000000000000511 _continue_and
+              task.s:371    .text:000000000000054f _continue_or
+              task.s:383    .text:000000000000058d _continue_exp
+              task.s:392    .text:00000000000005a7 _exp_loop
+              task.s:396    .text:00000000000005af _exp_save
+              task.s:401    .text:00000000000005b8 _error
+              task.s:409    .text:00000000000005d9 _exit
+              task.s:425    .text:0000000000000612 _0b
+              task.s:428    .text:000000000000061c _1b
+              task.s:435    .text:000000000000062b _2b
 
 NO UNDEFINED SYMBOLS
