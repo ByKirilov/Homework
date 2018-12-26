@@ -47,10 +47,10 @@ CREATE TABLE Kirilov.Tariffs
 
 INSERT INTO Kirilov.Tariffs
 VALUES
-(1,N'Без абоненской платы',0,0,1),
-(2,N'Безлимит',1000,44640,0),
-(3,N'Пакет 200',150,200,1.5),
-(4,N'Пакет 300',200,300,1.7)
+(1,N'ГЃГҐГ§ Г ГЎГ®Г­ГҐГ­Г±ГЄГ®Г© ГЇГ«Г ГІГ»',0,0,1),
+(2,N'ГЃГҐГ§Г«ГЁГ¬ГЁГІ',1000,44640,0),
+(3,N'ГЏГ ГЄГҐГІ 200',150,200,1.5),
+(4,N'ГЏГ ГЄГҐГІ 300',200,300,1.7)
 GO
 SELECT * FROM Kirilov.Tariffs
 GO
@@ -109,7 +109,7 @@ WHILE @@FETCH_STATUS = 0
 END
 GO
 
-SELECT tarif_name as Лучший_тариф FROM Kirilov.Tariffs WHERE Kirilov.get_best_tarif(250) = t_id
+SELECT tarif_name as Г‹ГіГ·ГёГЁГ©_ГІГ Г°ГЁГґ FROM Kirilov.Tariffs WHERE Kirilov.get_best_tarif(250) = t_id
 GO
 
 IF EXISTS(
@@ -201,13 +201,13 @@ AS
 			IF (Kirilov.get_best_tarif(@f_coord) != Kirilov.get_best_tarif(@s_coord))
 				BEGIN
 					INSERT INTO #Limits
-					VALUES ( CEILING(@f_coord), CEILING(@s_coord - 1),(SELECT tarif_name as Лучший_тариф FROM Kirilov.Tariffs WHERE Kirilov.get_best_tarif(@f_coord) = t_id))
+					VALUES ( CEILING(@f_coord), CEILING(@s_coord - 1),(SELECT tarif_name as Г‹ГіГ·ГёГЁГ©_ГІГ Г°ГЁГґ FROM Kirilov.Tariffs WHERE Kirilov.get_best_tarif(@f_coord) = t_id))
 					SET @f_coord =  CEILING(@s_coord)
 
 				END
 		END
 		INSERT INTO #Limits
-		VALUES ( CEILING(@f_coord),44640,(SELECT tarif_name as Лучший_тариф FROM Kirilov.Tariffs WHERE Kirilov.get_best_tarif(@f_coord) = t_id))
+		VALUES ( CEILING(@f_coord),44640,(SELECT tarif_name as Г‹ГіГ·ГёГЁГ©_ГІГ Г°ГЁГґ FROM Kirilov.Tariffs WHERE Kirilov.get_best_tarif(@f_coord) = t_id))
 		CLOSE cur3
 		DEALLOCATE cur3
 		SELECT * FROM #Limits
