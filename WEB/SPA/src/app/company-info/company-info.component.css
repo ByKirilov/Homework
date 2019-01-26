@@ -1,15 +1,19 @@
 .photo {
     display: inline-block;
-    width: 33%;
+    width: 32%;
+    height: 33%;
+    margin-left: 1%;
+    text-align: center;
+    border: 0.5px gray solid;
 }
 
-h2 {
-    width: ;
-    margin: 0px;
-}
+/*h2 {*/
+    /*width: ;*/
+    /*margin: 0px;*/
+/*}*/
 
 img {
-    width: auto; height: 33%;
+    width: 100%; height: 33%;
 }
 
 /* .galerry {
