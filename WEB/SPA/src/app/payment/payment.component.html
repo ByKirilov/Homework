@@ -1,33 +1,60 @@
-<form action="">
-  <div class="wrapper">
-    <div class="box">
-      <div class="card-data">
-        <!--Добавить подгрузку иконок-->
-        <div class="icon-container">
-          <i class="card visa"></i>
-          <i class="card mastercard"></i>
-          <i class="card maestro"></i>
-        </div>
-        <!-- info данные по карте.-->
-        <div class="card-info">
-          <input type="text" name="cardname" placeholder="Номер карты"><br>
-          <input type="text" name="expdate" placeholder="ММ/ГГ">
-          <input type="text" name="CVC" placeholder="CVC" >
-        </div>
-      </div>
-    </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <div class="box">
-      <div class="order-data">
-        <label for="_sum"><b>Сумма</b></label>
-        <input type="text" name="sum" id="_sum" placeholder="от 1000 до 75000"><br>
-        <label for="_comment"><b>Комментарий</b></label>
-        <input type="text" name="_comment" id="_comment" placeholder="До 150 символов"><br>
-        <label for="user-e-mail"><b>Ваша эл.почта</b></label>
-        <input type="text" name="user-e-mail" id="user-e-mail" placeholder="Для квитанций об оплате"><br>
-        <input type="submit" value="Заплатить" class="btn">
+<div class="row">
+  <div class="card-container">
+    <div class="row">
+      <div class="col">
+        <div class="card-container">
+
+          <div class="card-line">
+            <div class="icon-container">
+              <img src="assets/visa.png">
+              <img src="assets/master.png">
+              <img src="assets/maestro.png">
+            </div>
+          </div>
+
+          <div class="card-line">
+            <input type="text" name="cardname" id="cardnumber" placeholder="Номер карты">
+          </div>
+
+          <div class="card-line">
+            <div class="expdate_and_CVC">
+              <input type="text" name="expdate" id="expdate" placeholder="ММ/ГГ">
+              <input type="text" name="CVC" id="CVC" placeholder="CVC">
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
-  
-</form>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="order-data">
+
+          <div class="order-line">
+            <label for="_sum"><b>Сумма</b></label>
+            <input type="text" name="sum" id="_sum" placeholder="от 1000 до 75000">
+          </div>
+
+          <div class="order-line">
+            <label for="_comment"><b>Комментарий</b></label>
+            <input type="text" name="_comment" id="_comment" placeholder="До 150 символов">
+          </div>
+
+          <div class="order-line">
+            <label for="user-e-mail"><b>Ваша эл.почта</b></label>
+            <input type="text" name="user-e-mail" id="user-e-mail" placeholder="Для квитанций об оплате">
+          </div>
+
+          <div class="order-line">
+            <input type="submit" value="Заплатить" class="btn">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

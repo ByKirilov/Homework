@@ -6,13 +6,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./client-info.component.css']
 })
 export class ClientInfoComponent implements OnInit {
-  clientName = "blablabla";
-  clientNumber = "+79095647899";
-  clientSite = "www.company.ru";
-  clientMailAdress = "bla@blabla.ru";
-  clientCompanyInfo = "www.company.ru/info";
-  clientRequisites = "www.company.ru/requisites";
-  clientLogoPath = "assets/logo.jpg";
+  clientName = "Твоя мамка";
+  clientNumber = "+79991234567";
+  clientSite = "www.balance.su";
+  clientMailAdress = "balance@balance.su";
+  clientCompanyInfo = "www.balance.su/info";
+  clientRequisites = "www.balance.su/requisites";
+  clientLogoPath = "assets/ferret-logo.jpg";
 
 
   constructor() { }

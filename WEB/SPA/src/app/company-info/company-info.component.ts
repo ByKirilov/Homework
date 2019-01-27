@@ -7,12 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CompanyInfoComponent implements OnInit {
 
-  companyFirstPhoto = "assets/lake.jpg";
-  firstPhotoPrice = 123;
-  companySecondPhoto = "assets/field.jpg";
-  secondPhotoPrice = 456;
-  companyThirdPhoto = "assets/road.jpg";
-  thirdPhotoPrice = 789;
+  companyFirstPhoto = "assets/ferret-1.jpg";
+  firstPhotoPrice = 42;
+  companySecondPhoto = "assets/ferret-2.jpg";
+  secondPhotoPrice = 333;
+  companyThirdPhoto = "assets/ferret-3.jpg";
+  thirdPhotoPrice = 666;
 
   constructor() { }
 

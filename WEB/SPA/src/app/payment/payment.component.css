@@ -1,31 +1,122 @@
 /* * {
     box-sizing: border-box;
   } */
-  
-  .box {
-    float: left;
+
+.col {
+    -ms-flex: 50%;
+    flex: 50%;
+    padding: 0 16px;
+    /*width: 100%;*/
+}
+/* .wrapper::after {
+  content: "";
+  clear: both;
+  display: table;
+} */
+
+.container {
+    padding: 5px 5% 15px 5%;
+}
+
+.card-container {
+    background-color: #f2f2f2;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    width: 315px;
+    height: 175px;
+    box-shadow: 0 4px 8px 0 darkgray, 0 6px 20px 0 darkgray;
+    margin-bottom: 20px;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-content: center;
+}
+
+.card-line {
+    margin-left: 5%;
+
+    height: 30%;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+}
+
+.card-line img {
+    margin-left: 3%;
+}
+
+.card-line input {
+    background: transparent;
+    border: 1px darkgray;
+    border-bottom-style: solid;
+    margin-right: 15%;
+}
+
+.card-line input#cardnumber {
+    width: 78%;
+}
+
+.card-line input#expdate {
     width: 25%;
-    padding: 10px 2px 2px 2px;
-  }
-  /* .wrapper::after {
-    content: "";
-    clear: both;
-    display: table;
-  } */
+    margin-right: 20%;
+}
+
+.card-line input#CVC {
+    width: 20%;
+}
 
 .icon-container {
-
+    text-align: right;
+    margin-right: 5%;
 }
 
-.card-data {
-    
+.card-number {
+    display: inline-block;
+    width: 90%;
+    height: 5px;
+    vertical-align: center;
+    margin-bottom: 1px;
 }
 
-.card-info input {
-    text-align: center;
+.row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin: 0 -16px;
+    justify-content: center;
 }
+
+/*.row .col {*/
+    /*width: 100%;*/
+/*}*/
 
 .order-data {
-    float: right;
+    min-width: 315px;
+    height: 175px;
+
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
+.order-line input[type="text"] {
+    float: right;
+    background: transparent;
+    border: 1px darkgray;
+    border-bottom-style: solid;
+    width: 50%;
+}
+
+.order-line input#_sum {
+    border: none;
+}
+
+form {
+    /*padding-left: 10%;*/
+    /*text-align: justify;*/
+}
