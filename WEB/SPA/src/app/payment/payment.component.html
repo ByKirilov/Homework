@@ -15,13 +15,14 @@
           </div>
 
           <div class="card-line">
-            <input type="text" name="cardname" id="cardnumber" placeholder="Номер карты">
+            <input type="text" name="cardname" id="cardnumber" placeholder="Номер карты" pattern="^\d{16}$">
           </div>
 
           <div class="card-line">
             <div class="expdate_and_CVC">
-              <input type="text" name="expdate" id="expdate" placeholder="ММ/ГГ">
-              <input type="text" name="CVC" id="CVC" placeholder="CVC">
+              <input type="text" name="expdate" id="expdate" placeholder="ММ/ГГ"
+                     pattern="^((0[1-9])|(1[0-2]))/((1[7-9])|(2[0-9])|(3[0-5]))$">
+              <input type="text" name="CVC" id="CVC" placeholder="CVC" pattern="^\d{3}$">
             </div>
           </div>
 
@@ -37,17 +38,18 @@
 
           <div class="order-line">
             <label for="_sum"><b>Сумма</b></label>
-            <input type="text" name="sum" id="_sum" placeholder="от 1000 до 75000">
+            <input type="text" name="sum" id="_sum" placeholder="от 1000 до 75000"
+                   pattern="(^[1-6]\d{4}$)|(^7[0-4]\d{3}$)|(^[1-9]\d{3}$)|(^75000$)">
           </div>
 
           <div class="order-line">
             <label for="_comment"><b>Комментарий</b></label>
-            <input type="text" name="_comment" id="_comment" placeholder="До 150 символов">
+            <input type="text" name="_comment" id="_comment" placeholder="До 150 символов" pattern="^.{0,150}$">
           </div>
 
           <div class="order-line">
             <label for="user-e-mail"><b>Ваша эл.почта</b></label>
-            <input type="text" name="user-e-mail" id="user-e-mail" placeholder="Для квитанций об оплате">
+            <input type="email" name="user-e-mail" id="user-e-mail" placeholder="Для квитанций об оплате">
           </div>
 
           <div class="order-line">

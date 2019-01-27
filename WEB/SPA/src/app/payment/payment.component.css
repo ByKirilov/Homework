@@ -104,7 +104,7 @@
     justify-content: space-between;
 }
 
-.order-line input[type="text"] {
+.order-line input[type="text"], input[type="email"] {
     float: right;
     background: transparent;
     border: 1px darkgray;

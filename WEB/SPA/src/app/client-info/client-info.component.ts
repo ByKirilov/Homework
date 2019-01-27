@@ -8,10 +8,10 @@ import { Component, OnInit } from '@angular/core';
 export class ClientInfoComponent implements OnInit {
   clientName = "Твоя мамка";
   clientNumber = "+79991234567";
-  clientSite = "www.balance.su";
-  clientMailAdress = "balance@balance.su";
-  clientCompanyInfo = "www.balance.su/info";
-  clientRequisites = "www.balance.su/requisites";
+  clientSite = "www.mamka.com";
+  clientMailAdress = "mamka@mamka.com";
+  clientCompanyInfo = "www.mamka.com/info";
+  clientRequisites = "www.mamka.com/requisites";
   clientLogoPath = "assets/ferret-logo.jpg";
 
 

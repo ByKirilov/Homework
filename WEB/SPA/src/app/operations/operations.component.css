@@ -1,0 +1,12 @@
+.operation_type {
+    background: transparent;
+    border: none;
+    font-size: 150%;
+    margin-bottom: 20px;
+}
+
+.operations {
+    padding-right: 10%;
+    padding-left: 10%;
+}
+

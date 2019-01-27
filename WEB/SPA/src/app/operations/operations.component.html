@@ -1,3 +1,21 @@
-<p>
-  operations works!
-</p>
+<div class="operations">
+    <!--<input type="button" class="btn" id="pay" value="Заплатить">-->
+    <!--<input type="button" class="btn" id="request_payment" value="Запросить платёж">-->
+    <button
+            class="operation_type"
+            id="pay" type="button"
+            [disabled]="isPayScreen"
+            [ngStyle]="{color: getPayButtonColor()}"
+            (click)="onPayButtonClick()">
+        Заплатить</button>
+    <button
+            class="operation_type"
+            id="request_payment"
+            type="button"
+            [disabled]="isRequestPaymentScreen"
+            [ngStyle]="{color: getRequestPaymentButtonColor()}"
+            (click)="onRequestPaymentButtonButtonClick()">
+        Запросить платёж</button>
+
+    <app-payment></app-payment>
+</div>
