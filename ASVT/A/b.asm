@@ -11,6 +11,6 @@ _start:
 	xor 	ah, ah
 	int 	16h
 ;
-;	int 	19h
-	ret
+	int 	19h
+;	ret
 end _start
