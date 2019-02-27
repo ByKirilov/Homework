@@ -90,6 +90,7 @@ class IMG:
 	def delete_by_cluster(self, cluster):
 		file_info_start = FILE_INFO_SIZE * (cluster - 1)
 		self.Clusters_table = self.Clusters_table[:file_info_start] + b'\x00' + self.Clusters_table[file_info_start + 1:]
+		self.save()
 
 	def delete_by_name(self, name):
 		files = self.i_list()
@@ -98,6 +99,9 @@ class IMG:
 				self.delete_by_cluster(int(file[0]))
 				return
 		print('File not found')
+
+	def get_cluster_inside(self, cluster):
+		return self.Clusters[cluster-1]
 
 
 def main():
@@ -201,6 +205,19 @@ def i_load(image, path, cluster=None):
 			print(e)
 
 
+def i_read(image, filename, arg2=None):
+	files = image.i_list()
+	for file in files:
+		if file[1] == filename:
+			file_inside = image.get_cluster_inside(int(file[0]))
+			if arg2 == '-d':
+				print(file_inside.decode())
+			else:
+				print(file_inside)
+			return
+	print('File not found!')
+
+
 def i_help(image, command=None, arg2=None):
 	pass
 
@@ -220,6 +237,8 @@ COMMANDS = {
 	'dir': i_list,
 	'del': i_del,
 	'load': i_load,
+	'read': i_read,
+	'cat': i_read,
 	'help': i_help,
 	'?': i_help,
 	'exit': exit,
