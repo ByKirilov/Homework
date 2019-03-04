@@ -4,13 +4,13 @@ org 100h
 locals
 _start:
 	mov	ax, 0b800h
-	mov 	es, ax
-	mov 	di, 1994
-	mov 	ax, 0e41h
-	stosw
+	mov 	es, ax		; переброс указателя сегмента на консоль
+	mov 	di, 1994	; переброс указателя смещения на центр консоли
+	mov 	ax, 0e41h	; латинская большая буква A жёлтого цвета на чёрном фоне
+	stosw			; запись символа
 	xor 	ah, ah
-	int 	16h
+	int 	16h		; ожидание ввода с клавиатуры
 ;
-	int 	19h
+	int 	19h		; перезагрузка
 ;	ret
 end _start
