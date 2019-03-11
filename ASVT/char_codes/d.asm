@@ -1,7 +1,4 @@
 .model tiny
-.data
-	shift 	db 5
-	str_len	db 160
 .code
 org 100h
 locals
@@ -11,55 +8,55 @@ _start:
 	mov	ax, 3		; очистка экрана
 	int	10h
 
-	mov	ax, 0b800h
-	mov	es, ax
-	mov 	ds, ax
+	mov	ax, 0b800h	
+	mov	es, ax		; переброс указателя сегмента на консоль
+	mov 	ds, ax		; то же самое, но для чтения, т.к. lodsw использует ds:si
 	xor 	di, di
 _1:
 	xor	ah, ah
-	int	16h
-	cmp 	di, 3860
-	jle 	print
+	int	16h		; ввод символа
+	cmp 	di, 3860	; проверка, дошли ли до конца консоли
+	jle 	print		; если нет, печатаем
 
-	push 	ax
-	mov 	ax, 5
+	push 	ax		; сохраняем введённый символ
+	mov 	ax, 5		; величина сдвига (строк)
 	mov 	bx, 160
-	mul 	bx
-
-	mov 	si, ax
-	xor 	di, di
-	mov 	cx, 25
-	sub 	cx, 5
+	mul 	bx		; умножаем на ширину строки (80*2), чтобы найти символ,
+				; с которого начинаем перемещение
+	mov 	si, ax		; полученное смещение кладём в si
+	xor 	di, di		; di перемещаем в начало консоли
+	mov 	cx, 25		
+	sub 	cx, 5		; задаем кол-во повтрорений цикла переноса строк
 scroll:
-	push 	cx
-	mov 	cx, 7
+	push 	cx		; сохраняем это значение
+	mov 	cx, 7		; задаем кол-во повтрорений цикла для переноса одной строки
 carry:
-	lodsw
-	stosw
-	loop 	carry
+	lodsw			; считываем символ на который смотрит si
+	stosw			; пишем его туда, куда смотрит di
+	loop 	carry		; повторяем
 
-	add 	di, 146
-	add 	si, 146
-	pop	cx
-	loop 	scroll
-
-	mov 	cx, 5
-	push 	di
+	add 	di, 146		; переносим di на новую строку
+	add 	si, 146		; переносим si на новую строку
+	pop	cx		; достаём счётчик внешнего цикла
+	loop 	scroll		; повторяем
+				; теперь чистим низ
+	mov 	cx, 5		; кладём в счётчик, сколько строк надо почистить
+	push 	di		; сохраняем текущую позицию di, потому что писать следующие символы будем оттуда
 clear:
-	push 	cx
-	mov 	cx, 7
+	push 	cx		; сохраняем счётчик цикла
+	mov 	cx, 7		; кладём в счётчик, сколько символов в строке надо почистить
 clear_str:
-	mov	ax, 0021h
+	mov	ax, 0020h	; пишем пробел
 	stosw
-	loop 	clear_str
-	add 	di, 146
+	loop 	clear_str	; повторяем
+	add 	di, 146		; идём на следующую строку
 
-	pop 	cx
-	loop 	clear
+	pop 	cx		; достаём счётчик внешнего цикла
+	loop 	clear		; повторяем
 
-	pop 	di
+	pop 	di		; возвращаем позицию с которой печатать
 
-	pop 	ax
+	pop 	ax		; достаём символ, который печатать
 ;---------------------------------
 print:
 	mov 	bx, ax
