@@ -31,9 +31,10 @@ FATtype		db 'FAT12   '
 ; ╔И╔ 2 А ╜Ц╚╔╒╝╘ ╓╝Ю╝ё╗ ╖═╘╛╔╛ ╜═ А╒╝╘ root dir
 ;  ╗ ╝АБ═╔БАО 39 ╓╝Ю╝╕╔╙ ╜═ Д═╘╚К (╒╙╚НГ═О А╒╝╘ ╖═ёЮЦ╖Г╗╙)
 ;
-greeting 	db 'Hello', 0		; 7c3eh
+greeting 	db 'Hi!', 0		; 7c3eh
 empty 		db '::EMPTY::', 0	; 7c44h
-; Navid_text 	db 'Navigation', 0	; 7c4eh
+navigation_text db 18h, ' - up, ', 19h, ' - down, Enter - Start', 0 ; 7c4ch
+; Navig_text 	db 'Navigation', 0	; 7c4eh
 ; Up_arr		db 18h, ' - up', 0	; 7c59h
 ; Down_arr	db 19h, ' - down', 0	; 7c60h
 ; start_prog	db 'Enter - Start', 0	; 7c69h
@@ -141,24 +142,12 @@ _new_iter:
 	pop 	cx
 	pop 	di
 	loop 	_loop
-
-; _footer:
-; ; 'Navigation:'
-; 	mov 	di, 3574
-; 	mov 	si, 7c4eh
-; 	call 	print_str
-; ; 'Up - up'
-; 	mov 	di, 3736
-; 	mov 	si, 7c59h
-;	call 	print_str
-; ; 'Down - down'
-; 	mov 	di, 3896
-; 	mov 	si, 7c60h
-;	call 	print_str
-; ; 'Enter - Start'
-; 	mov 	di, 3760
-; 	mov 	si, 7c69h
-;	call 	print_str
+; Footer
+	xor 	ax, ax
+	mov 	ds, ax 
+	mov 	di, 3574
+	mov 	si, 7c4ch
+	call 	print_str
 ;------------------------------------------------------------------------------
 	mov 	ax, 0b800h
 	mov 	ds, ax
@@ -191,15 +180,9 @@ up:
 	std
 	mov 	ah, 0ah
 	call 	c_light_str
-	; sub 	di, 320
-	; sub 	si, 320
-
-	; cmp 	di, 160
 	cmp 	di, 320
 	mov 	ah, 0a0h
 	jg 	light_str_up
-	; mov 	di, 3360
-	; mov 	si, 3360
 	mov 	di, 3358
 	mov 	si, 3358
 	mov 	ch, 40
@@ -229,8 +212,8 @@ light_str_down:
 	jmp 	navigation
 
 exit:
-	mov	ax, 3		; очистка экрана
-	int	10h
+	; mov	ax, 3		; очистка экрана
+	; int	10h
 	; ret
 	int 	19h
 	ret
@@ -249,24 +232,18 @@ _enter:
 	call 	load_from_mem
 
 	dec 	ch
-
-	
 ;--------------------------------
 	xor 	di, di
-	cli
 	mov 	al, 0eah
 	stosb
-	xor 	al, al
+	mov 	al, 0c3h
 	stosb
-	mov 	al, 7ch
+	mov 	al, 7dh
 	stosb
-	sti
 
 db	0eah, 0, 1, 0, 20h
 
-	; mov 	ax, 0b800h
-	; mov 	es, ax
-	; jmp 	navigation
+	jmp 	_start
 
 
 print_str proc
