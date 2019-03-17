@@ -40,8 +40,6 @@ navigation_text db 18h, ' - up, ', 19h, ' - down, Enter - Start', 0 ; 7c4ch
 ; start_prog	db 'Enter - Start', 0	; 7c69h
 
 _start:
-	xor 	ax, ax
-	mov 	ds, ax
 	mov	ax, 3		; очистка экрана
 	int	10h
 
@@ -145,7 +143,7 @@ _new_iter:
 ; Footer
 	xor 	ax, ax
 	mov 	ds, ax 
-	mov 	di, 3574
+	mov 	di, 3568 	; 3520 + 48
 	mov 	si, 7c4ch
 	call 	print_str
 ;------------------------------------------------------------------------------
@@ -236,12 +234,15 @@ _enter:
 	xor 	di, di
 	mov 	al, 0eah
 	stosb
-	mov 	al, 0c3h
+	mov 	al, 0bfh	; c3
 	stosb
 	mov 	al, 7dh
 	stosb
 
 db	0eah, 0, 1, 0, 20h
+	
+	xor 	ax, ax
+	mov 	ds, ax
 
 	jmp 	_start
 
