@@ -32,7 +32,7 @@ FATtype		db 'FAT12   '
 ;  ╗ ╝АБ═╔БАО 39 ╓╝Ю╝╕╔╙ ╜═ Д═╘╚К (╒╙╚НГ═О А╒╝╘ ╖═ёЮЦ╖Г╗╙)
 ;
 greeting 	db 'Hi!', 0		; 7c3eh
-empty 		db '::EMPTY::', 0	; 7c44h
+empty 		db '~~~', 0	; 7c44h
 navigation_text db 18h, ' - up, ', 19h, ' - down, Enter - Start', 0 ; 7c4ch
 ; Navig_text 	db 'Navigation', 0	; 7c4eh
 ; Up_arr		db 18h, ' - up', 0	; 7c59h
@@ -46,6 +46,7 @@ _start:
 	cli
 	mov 	ax, 2000h
 	mov 	ss, ax
+
 	xor 	sp, sp
 	sti
 	push 	sp
@@ -58,14 +59,16 @@ _start:
 
 	mov 	ax, 0b800h
 	mov 	es, ax
+
 	mov 	di, 76
 ; Выводим верхушеньку "Hello"
-	mov 	si, 7c3eh
+	mov 	si, offset greeting + 7b00h
 	call 	print_str
 
 ; Вивели
 	mov 	ax, 1000h
 	mov 	ds, ax
+
 	xor 	si, si
 	mov 	di, 166
 
@@ -121,7 +124,7 @@ _3:
 	push 	ds
 	xor 	dx, dx
 	mov 	ds, dx
-	mov 	si, 7c44h
+	mov 	si, offset empty + 7b00h
 	call 	print_str
 	pop 	ds
 	pop 	si
@@ -142,13 +145,15 @@ _new_iter:
 	loop 	_loop
 ; Footer
 	xor 	ax, ax
-	mov 	ds, ax 
+	mov 	ds, ax
+
 	mov 	di, 3568 	; 3520 + 48
-	mov 	si, 7c4ch
+	mov 	si, offset navigation_text  + 7b00h
 	call 	print_str
 ;------------------------------------------------------------------------------
 	mov 	ax, 0b800h
 	mov 	ds, ax
+
 	mov 	di, 320
 	mov 	si, di
 	mov 	ch, 2
@@ -169,8 +174,6 @@ navigation:
 	jmp 	navigation
 
 up:
-	; sub 	di, 160
-	; sub 	si, 160
 	dec 	si
 	dec 	di
 	dec 	si
@@ -210,11 +213,7 @@ light_str_down:
 	jmp 	navigation
 
 exit:
-	; mov	ax, 3		; очистка экрана
-	; int	10h
-	; ret
 	int 	19h
-	ret
 ;----------------
 _enter:
 	; TODO: сделать проверку на наличие файла
@@ -228,18 +227,19 @@ _enter:
 	mov 	ax, 2000h
 	mov 	bx, 1300h
 	call 	load_from_mem
-
-	dec 	ch
 ;--------------------------------
-	xor 	di, di
-	mov 	al, 0eah
-	stosb
-	mov 	al, 0bfh	; c3
-	stosb
-	mov 	al, 7dh
-	stosb
-
-db	0eah, 0, 1, 0, 20h
+	push 	ss
+	pop 	ds
+	xor 	ax, ax
+	xor 	bx, bx
+	mov 	cx, 0ffh
+	mov 	dx, 18dbh
+	mov 	si, 100h
+	mov 	di, 0fffeh
+	; push 	7202h
+	; popf
+	mov 	bp, 91ch
+db	9ah, 0, 1, 0, 20h
 	
 	xor 	ax, ax
 	mov 	ds, ax
